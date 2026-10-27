@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Profile } from '../../data/model'
+import BackupPanel from './BackupPanel'
 import { useProfiles } from './ProfileContext'
 import ProfileEditor from './ProfileEditor'
 
@@ -60,6 +61,7 @@ export default function ProfilePicker() {
           <span className="profile-name">Dodaj osobę</span>
         </button>
       </div>
+      <BackupPanel />
     </section>
   )
 }

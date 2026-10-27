@@ -643,3 +643,39 @@ h1 {
 .link-button.danger {
   color: var(--red);
 }
+
+/* --- Kopia zapasowa --- */
+
+.backup {
+  margin-top: 40px;
+  padding-top: 16px;
+  border-top: 2px solid var(--muted);
+}
+
+.backup h2 {
+  margin: 0 0 4px;
+  font-size: 1.3rem;
+}
+
+.backup-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.backup-buttons .small-button {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0;
+  cursor: pointer;
+}
+
+.success {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #ddf5e3;
+  color: #1d6b33;
+  font-size: 1.1rem;
+}
