@@ -46,6 +46,12 @@ export function pendingGoalEvent(events: readonly ActivityEvent[], profile: Prof
  */
 export function familyStreak(events: readonly ActivityEvent[], profiles: readonly Profile[], today: string): number | null {
   if (profiles.length < 2) return null
+  return consecutiveDays(familyDays(events, profiles, today), today)
+}
+
+/** Dni, w których każda osoba spełniła cel albo uratowała dzień ochroną (od dwóch osób). */
+export function familyDays(events: readonly ActivityEvent[], profiles: readonly Profile[], today: string): Set<string> {
+  if (profiles.length < 2) return new Set()
   const perProfile = profiles.map((p) => {
     const mine = eventsOf(events, p.id)
     const days = goalDays(mine)
@@ -53,6 +59,5 @@ export function familyStreak(events: readonly ActivityEvent[], profiles: readonl
     return days
   })
   const [first, ...rest] = perProfile
-  const shared = new Set([...first].filter((d) => rest.every((days) => days.has(d))))
-  return consecutiveDays(shared, today)
+  return new Set([...first].filter((d) => rest.every((days) => days.has(d))))
 }

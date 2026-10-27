@@ -13,6 +13,8 @@ export interface StreakInfo {
   frozenDays: string[]
   /** Najdłuższa seria w historii. */
   best: number
+  /** reachedOn[n − 1] = dzień, w którym seria pierwszy raz doszła do n dni (do odznak). */
+  reachedOn: string[]
   goalMetToday: boolean
 }
 
@@ -22,14 +24,17 @@ export interface StreakInfo {
  * Dzisiejszy dzień jeszcze trwa, więc jego brak nie przerywa serii.
  */
 export function computeStreak(goalDays: ReadonlySet<string>, today: string): StreakInfo {
-  const result: StreakInfo = { streak: 0, freezes: 0, frozenDays: [], best: 0, goalMetToday: goalDays.has(today) }
+  const result: StreakInfo = { streak: 0, freezes: 0, frozenDays: [], best: 0, reachedOn: [], goalMetToday: goalDays.has(today) }
   if (goalDays.size === 0) return result
   const first = [...goalDays].sort()[0]
 
   for (const day of daysBetween(first, today)) {
     if (goalDays.has(day)) {
       result.streak++
-      result.best = Math.max(result.best, result.streak)
+      if (result.streak > result.best) {
+        result.best = result.streak
+        result.reachedOn.push(day)
+      }
       if (result.streak % FREEZE_EVERY === 0) result.freezes = Math.min(MAX_FREEZES, result.freezes + 1)
     } else if (day === today) {
       // dzień jeszcze trwa – czekamy
