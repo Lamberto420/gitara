@@ -3,7 +3,7 @@
 // a zdobytej odznaki nie da się stracić (liczymy z całej historii, np. najdłuższą serię).
 import { addDays } from './days'
 import type { ActivityEvent, Profile } from '../data/model'
-import { isGoal, isPractice } from './events'
+import { isGoal, isNoteGame, isPractice } from './events'
 import { familyDays } from './progress'
 import { computeStreak } from './streak'
 
@@ -52,6 +52,9 @@ function firstDayReaching(events: ActivityEvent[], value: (e: ActivityEvent) => 
 const practiceSeconds = (e: ActivityEvent) => (isPractice(e) ? e.seconds : 0)
 const metronomeSeconds = (e: ActivityEvent) => (isPractice(e) && e.metronome === true ? e.seconds : 0)
 const count = (type: string) => (e: ActivityEvent) => (e.type === type ? 1 : 0)
+/** Runda gry bez ani jednej pomyłki (opcjonalnie tylko na danym poziomie). */
+const perfectRound = (level?: string) => (e: ActivityEvent) =>
+  isNoteGame(e) && e.firstTry === e.notes && (!level || e.level === level) ? 1 : 0
 
 function minutesBadge(id: string, emoji: string, name: string, minutes: number, label: string): BadgeRule {
   return {
@@ -123,6 +126,38 @@ const RULES: readonly BadgeRule[] = [
     description: '30 minut grania z metronomem',
     hint: 'Zagraj łącznie 30 minut z metronomem',
     earned: (s) => firstDayReaching(s.mine, metronomeSeconds, 30 * 60),
+  },
+  {
+    id: 'game-1',
+    emoji: '🎯',
+    name: 'Pierwsza runda',
+    description: 'Ukończona runda gry „Zagraj nutę”',
+    hint: 'Ukończ rundę w zakładce 🎯 Gra',
+    earned: (s) => firstDayReaching(s.mine, count('note-game'), 1),
+  },
+  {
+    id: 'game-10',
+    emoji: '🎮',
+    name: 'Dziesięć rund',
+    description: '10 ukończonych rund gry',
+    hint: 'Ukończ 10 rund gry',
+    earned: (s) => firstDayReaching(s.mine, count('note-game'), 10),
+  },
+  {
+    id: 'game-perfect',
+    emoji: '💯',
+    name: 'Bezbłędnie',
+    description: 'Runda gry bez ani jednej pomyłki',
+    hint: 'Zagraj całą rundę bez pomyłki',
+    earned: (s) => firstDayReaching(s.mine, perfectRound(), 1),
+  },
+  {
+    id: 'game-hard-perfect',
+    emoji: '🎓',
+    name: 'Mistrz nut',
+    description: 'Bezbłędna runda na trudnym poziomie',
+    hint: 'Bezbłędna runda na poziomie 🔥 Trudny',
+    earned: (s) => firstDayReaching(s.mine, perfectRound('hard'), 1),
   },
   {
     id: 'early-bird',

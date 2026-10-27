@@ -112,13 +112,15 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 Zrobione: stroik (auto + blokada struny + dźwięk wzorcowy), metronom (tempo, metrum, tap tempo,
 Wake Lock), PWA, publikacja, profile z kopią zapasową, silnik postępu z nagłówkiem (seria, nutki, cel),
 licznik „Ćwiczę 🎸” (przycisk pod paskiem postępu, działa na każdej zakładce) z bonusami za
-metronom i nastrojenie gitary, 16–17 odznak z gablotą (🏅 w nagłówku) i świętowaniem,
+metronom i nastrojenie gitary, 20–21 odznak z gablotą (🏅 w nagłówku) i świętowaniem,
 komponenty pięciolinii i gryfu + zakładka „🎼 Nuty” (ściąga I pozycji: 24 nuty z krzyżykami,
 „Posłuchaj”, „Losuj”; bez nutek ⭐ – to podgląd, punkty da gra). `FIRST_POSITION_NATURALS` = łatwiejszy
-zestaw 17 nut bez krzyżyków (np. pierwszy poziom gry).
+zestaw 17 nut bez krzyżyków (poziom Łatwy gry).
+Gra „🎯 Zagraj nutę” (zakładka Gra): runda 10 nut, Łatwy/Trudny, sprawdzanie mikrofonem, sama włącza
+„Ćwiczę”, odznaki 🎯 🎮 💯 🎓.
 
 Dalej, w tej kolejności:
-4. **Gra „Zagraj nutę”** (I pozycja, sprawdzanie mikrofonem), potem edytor ćwiczeń dla taty.
+4. **Edytor ćwiczeń dla taty** (zadania domowe), np. jako własne rundy gry.
 5. Przegląd całej punktacji ⭐ (czy nie dajemy za dużo / za mało za poszczególne ćwiczenia).
 6. Później: trener tempa w metronomie; automatyczna synchronizacja przez Firebase, jeśli ręczne
    kopie okażą się uciążliwe (wymaga zmiany zasady „brak backendu”, reguł dostępu tylko dla

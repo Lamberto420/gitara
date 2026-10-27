@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { newProfile, type ActivityEvent } from '../data/model'
 import { computeBadges } from './badges'
 import { addDays } from './days'
-import { goalEvent, practiceEvent, tunedEvent } from './events'
+import { goalEvent, noteGameEvent, practiceEvent, tunedEvent } from './events'
 
 const TODAY = '2026-10-27'
 const kuba = newProfile({ name: 'Kuba', avatar: '🦊', color: '#f80', dailyGoalMinutes: 10 }, 1, 'kuba')
@@ -15,6 +15,8 @@ const at = (offset: number, hour = 18) => {
 }
 const play = (who: string, offset: number, minutes: number, hour = 18, metronome = false) =>
   practiceEvent(who, minutes * 60, at(offset, hour), metronome)
+const game = (who: string, offset: number, level: string, firstTry: number) =>
+  noteGameEvent(who, { level, notes: 10, firstTry, xp: 0 }, at(offset))
 const goal = (who: string, offset: number) => goalEvent(who, addDays(TODAY, offset), at(offset))
 
 function earned(events: ActivityEvent[], profiles = [kuba]) {
@@ -76,5 +78,18 @@ describe('computeBadges', () => {
     const almost = [...both(-6), ...both(-5), goal('kuba', -4)] // tata nie zagrał 3. dnia
     expect(earned(almost, [kuba, tata])['family-3']).toBeNull()
     expect(earned([...almost, ...both(-2), ...both(-1), ...both(0)], [kuba, tata])['family-3']).toBe(TODAY)
+  })
+
+  it('gra: pierwsza runda, 10 rund, bezbłędna runda i bezbłędna na trudnym', () => {
+    const rounds = [game('kuba', -5, 'easy', 7), game('kuba', -4, 'easy', 10), game('kuba', -3, 'hard', 9), game('tata', -6, 'hard', 10)]
+    const e = earned(rounds)
+    expect(e['game-1']).toBe(addDays(TODAY, -5))
+    expect(e['game-perfect']).toBe(addDays(TODAY, -4))
+    expect(e['game-hard-perfect']).toBeNull() // 9/10 to nie bezbłędnie, a runda taty się nie liczy
+    expect(e['game-10']).toBeNull()
+
+    const more = [...rounds, ...Array.from({ length: 6 }, (_, i) => game('kuba', -2, 'easy', 5 + i)), game('kuba', -1, 'hard', 10)]
+    expect(earned(more)['game-10']).toBe(addDays(TODAY, -1)) // 3 + 6 + 1 = 10. runda
+    expect(earned(more)['game-hard-perfect']).toBe(addDays(TODAY, -1))
   })
 })
