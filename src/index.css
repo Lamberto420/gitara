@@ -62,3 +62,156 @@ button {
 .screen {
   text-align: center;
 }
+
+.big-button {
+  min-height: 88px;
+  width: 100%;
+  font-size: 1.8rem;
+  font-weight: 800;
+  border: none;
+  border-radius: 24px;
+  background: var(--green);
+  color: white;
+  box-shadow: 0 6px 0 #1d8a3b;
+}
+
+.big-button:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #1d8a3b;
+}
+
+.big-button:disabled {
+  opacity: 0.6;
+}
+
+.small-button {
+  margin-top: 24px;
+  min-height: 48px;
+  padding: 0 24px;
+  font-size: 1.1rem;
+  border: 2px solid var(--muted);
+  border-radius: 14px;
+  background: transparent;
+  color: var(--text);
+}
+
+.hint {
+  font-size: 1.2rem;
+}
+
+.error {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #fde3e1;
+  color: #8a1c14;
+  font-size: 1.1rem;
+}
+
+/* --- Stroik --- */
+
+.needle {
+  width: 100%;
+  max-width: 420px;
+}
+
+.zone {
+  fill: none;
+  stroke-width: 14;
+}
+
+.zone.far {
+  stroke: var(--red);
+  opacity: 0.35;
+}
+
+.zone.close {
+  stroke: var(--yellow);
+  opacity: 0.5;
+}
+
+.zone.in-tune {
+  stroke: var(--green);
+}
+
+.hand {
+  stroke-width: 6;
+  stroke-linecap: round;
+  transform-origin: 100px 110px;
+  transition: transform 0.15s ease-out;
+}
+
+.hand.off,
+.hub.off {
+  stroke: #b9a993;
+  fill: #b9a993;
+}
+
+.hand.far,
+.hub.far {
+  stroke: var(--red);
+  fill: var(--red);
+}
+
+.hand.close,
+.hub.close {
+  stroke: var(--yellow);
+  fill: var(--yellow);
+}
+
+.hand.in-tune,
+.hub.in-tune {
+  stroke: var(--green);
+  fill: var(--green);
+}
+
+.note {
+  font-size: 6rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.note.muted {
+  color: #b9a993;
+}
+
+.string-label {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.message {
+  min-height: 2.5em;
+  margin: 16px 0 4px;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.message.in-tune {
+  color: var(--green);
+}
+
+.message.close {
+  color: #b38f00;
+}
+
+.message.far {
+  color: var(--red);
+}
+
+.details {
+  margin: 0;
+  color: #7a6a58;
+  font-size: 1rem;
+}
+
+.tuner.in-tune .note {
+  color: var(--green);
+  animation: pop 0.3s ease-out;
+}
+
+@keyframes pop {
+  50% {
+    transform: scale(1.15);
+  }
+}
