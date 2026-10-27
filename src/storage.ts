@@ -1,21 +1,37 @@
-// Zapis ustawień w localStorage. Wszystko w try/catch: w trybie prywatnym albo przy
+// Zapis w localStorage. Wszystko w try/catch: w trybie prywatnym albo przy
 // zablokowanych danych strony localStorage potrafi rzucić błąd – aplikacja ma wtedy po prostu
 // działać z ustawieniami domyślnymi.
 const PREFIX = 'gitara:'
 
 export function load<T extends object>(key: string, fallback: T): T {
+  const raw = loadRaw(key)
+  return raw === null || typeof raw !== 'object' ? fallback : { ...fallback, ...raw }
+}
+
+/** Surowa wartość (do własnej walidacji) albo null, gdy brak lub nie da się odczytać. */
+export function loadRaw(key: string): unknown {
   try {
     const raw = localStorage.getItem(PREFIX + key)
-    return raw === null ? fallback : { ...fallback, ...JSON.parse(raw) }
+    return raw === null ? null : JSON.parse(raw)
   } catch {
-    return fallback
+    return null
   }
 }
 
-export function save(key: string, value: unknown): void {
+/** Zwraca false, gdy zapis się nie udał (brak miejsca / zablokowane dane strony). */
+export function save(key: string, value: unknown): boolean {
   try {
     localStorage.setItem(PREFIX + key, JSON.stringify(value))
+    return true
   } catch {
-    // brak miejsca / zablokowane – trudno, ustawienia nie zostaną zapamiętane
+    return false
+  }
+}
+
+export function remove(key: string): void {
+  try {
+    localStorage.removeItem(PREFIX + key)
+  } catch {
+    // nic nie szkodzi
   }
 }
