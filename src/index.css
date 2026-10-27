@@ -1,0 +1,64 @@
+:root {
+  --bg: #fff8ef;
+  --text: #2b2118;
+  --accent: #ff8c1a;
+  --accent-dark: #c96500;
+  --muted: #f1e2cf;
+  --green: #2fbf55;
+  --yellow: #f5c400;
+  --red: #ef4136;
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--bg);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+  touch-action: manipulation; /* bez opóźnienia i zoomu przy podwójnym tapnięciu */
+}
+
+.app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.tab {
+  min-height: 64px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 16px;
+  background: var(--muted);
+  color: var(--text);
+}
+
+.tab.active {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 0 var(--accent-dark);
+}
+
+.screen {
+  text-align: center;
+}
