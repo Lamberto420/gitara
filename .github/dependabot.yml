@@ -1,0 +1,15 @@
+# Cotygodniowe propozycje aktualizacji (jako Pull Requesty do przejrzenia).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      # drobne aktualizacje w jednym PR, żeby nie zasypywać skrzynki
+      minor-and-patch:
+        update-types: [minor, patch]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

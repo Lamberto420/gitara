@@ -2,7 +2,9 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  // GitHub Pages serwuje aplikację pod https://<użytkownik>.github.io/gitara/
+  base: command === 'build' ? '/gitara/' : '/',
   plugins: [
     react(),
     // PWA: aplikację można zainstalować (telefon, tablet, komputer) i działa offline.
@@ -27,4 +29,4 @@ export default defineConfig({
       },
     }),
   ],
-})
+}))
