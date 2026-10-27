@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Profile } from '../../data/model'
+import { daysLabel, useProgress } from '../progress/useProgress'
 import BackupPanel from './BackupPanel'
 import { useProfiles } from './ProfileContext'
 import ProfileEditor from './ProfileEditor'
@@ -8,6 +9,7 @@ type Mode = { kind: 'pick' } | { kind: 'create' } | { kind: 'edit'; profile: Pro
 
 export default function ProfilePicker() {
   const { profiles, selectProfile, createProfile, updateProfile, deleteProfile } = useProfiles()
+  const { family } = useProgress()
   const [mode, setMode] = useState<Mode>(profiles.length ? { kind: 'pick' } : { kind: 'create' })
 
   if (mode.kind === 'create') {
@@ -42,6 +44,12 @@ export default function ProfilePicker() {
   return (
     <section className="profile-picker">
       <h1>Kto ćwiczy? 🎸</h1>
+      {family !== null && (
+        <p className={family > 0 ? 'family-streak lit' : 'family-streak'}>
+          🔥 Rodzinna seria: <strong>{daysLabel(family)}</strong>
+          <small>{family > 0 ? 'Grajcie dalej razem!' : 'Zagrajcie dziś wszyscy, żeby ją zacząć!'}</small>
+        </p>
+      )}
       <div className="profile-grid">
         {profiles.map((p) => (
           <div key={p.id} className="profile-card">

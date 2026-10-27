@@ -4,6 +4,8 @@ import MetronomeScreen from './features/metronome/MetronomeScreen'
 import { ProfileProvider, useProfiles } from './features/profiles/ProfileContext'
 import ProfileChip from './features/profiles/ProfileChip'
 import ProfilePicker from './features/profiles/ProfilePicker'
+import ProgressHeader from './features/progress/ProgressHeader'
+import { useProgress } from './features/progress/useProgress'
 
 type Tab = 'tuner' | 'metronome'
 
@@ -17,6 +19,7 @@ export default function App() {
 
 function Shell() {
   const { activeProfile, selectProfile, saveFailed } = useProfiles()
+  const { progress } = useProgress()
   const [tab, setTab] = useState<Tab>('tuner')
 
   return (
@@ -31,6 +34,7 @@ function Shell() {
           <header className="header">
             <ProfileChip profile={activeProfile} onClick={() => selectProfile(null)} />
           </header>
+          {progress && <ProgressHeader progress={progress} />}
           <nav className="tabs">
             <button className={tab === 'tuner' ? 'tab active' : 'tab'} onClick={() => setTab('tuner')}>
               🎸 Stroik

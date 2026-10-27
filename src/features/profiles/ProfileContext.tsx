@@ -9,7 +9,14 @@ import {
   saveAppData,
 } from '../../data/appData'
 import { mergeAppData, mergeSummary, type MergeSummary } from '../../data/merge'
-import { activeProfiles, newProfile, type AppData, type Profile, type ProfileInput } from '../../data/model'
+import {
+  activeProfiles,
+  newProfile,
+  type ActivityEvent,
+  type AppData,
+  type Profile,
+  type ProfileInput,
+} from '../../data/model'
 
 interface ProfilesApi {
   data: AppData
@@ -22,6 +29,8 @@ interface ProfilesApi {
   updateProfile(id: string, changes: Partial<ProfileInput>): void
   deleteProfile(id: string): void
   importData(incoming: AppData): MergeSummary
+  /** Dopisuje zdarzenia postępu (zdarzenia o istniejącym id są pomijane). */
+  addEvents(events: ActivityEvent[]): void
 }
 
 const ProfileContext = createContext<ProfilesApi | null>(null)
@@ -66,6 +75,10 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     setActiveId((current) => (current === id ? null : current))
   }, [])
 
+  const addEvents = useCallback((events: ActivityEvent[]) => {
+    setData((d) => mergeAppData(d, { ...d, profiles: [], events }))
+  }, [])
+
   const importData = useCallback(
     (incoming: AppData) => {
       const merged = mergeAppData(data, incoming)
@@ -85,6 +98,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     updateProfile,
     deleteProfile,
     importData,
+    addEvents,
   }
   return <ProfileContext.Provider value={api}>{children}</ProfileContext.Provider>
 }
