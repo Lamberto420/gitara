@@ -11,13 +11,20 @@ function clock(seconds: number): string {
  * Pasek postępu razem z przyciskiem „Ćwiczę 🎸”. Są w jednym komponencie, bo pasek celu
  * dolicza na żywo sekundy, których licznik jeszcze nie zapisał (zapis idzie co pełną minutę).
  */
-export default function PracticeArea({ profileId, progress }: { profileId: string; progress: ProfileProgress }) {
+interface Props {
+  profileId: string
+  progress: ProfileProgress
+  badges: { earned: number; total: number }
+  onOpenBadges(): void
+}
+
+export default function PracticeArea({ profileId, progress, badges, onOpenBadges }: Props) {
   const { status, error, playing, sessionSeconds, unsavedSeconds, start, stop } = usePractice(profileId)
   const live = { ...progress, todaySeconds: progress.todaySeconds + unsavedSeconds }
 
   return (
     <>
-      <ProgressHeader progress={live} />
+      <ProgressHeader progress={live} badges={badges} onOpenBadges={onOpenBadges} />
       {status === 'listening' ? (
         <div className={playing ? 'practice active' : 'practice'}>
           <div className="practice-status" aria-live="polite">

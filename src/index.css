@@ -845,3 +845,134 @@ h1 {
   font-size: 1.3rem;
   font-weight: 900;
 }
+
+/* --- Odznaki --- */
+
+.stat-button {
+  border: none;
+  color: var(--text);
+  min-height: 48px; /* dotykowe – otwiera gablotę */
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  overflow-y: auto;
+  background: var(--bg);
+}
+
+.overlay-content {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.overlay-header h2 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.close-button {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  border: none;
+  border-radius: 16px;
+  background: var(--muted);
+  color: var(--text);
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.level-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 3px 0 var(--muted);
+  font-size: 1.15rem;
+}
+
+/* W kolumnie flex: 1 zgniatałby pasek do zera wysokości. */
+.level-card .goal-bar {
+  flex: none;
+}
+
+.level-card small {
+  font-size: 1rem;
+  color: #7a6a58;
+}
+
+.badge-count {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.badge-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (min-width: 560px) {
+  .badge-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 14px 8px;
+  border-radius: 20px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.badge.earned {
+  background: #fff1c9;
+  box-shadow: 0 4px 0 #f0cf6e;
+}
+
+.badge.locked {
+  background: var(--muted);
+  color: #7a6a58;
+}
+
+.badge-emoji {
+  font-size: 2.6rem;
+  line-height: 1.1;
+}
+
+.badge.locked .badge-emoji {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.badge small {
+  font-size: 0.9rem;
+}
+
+.badge-date {
+  font-weight: 700;
+  color: var(--accent-dark);
+}

@@ -2,7 +2,14 @@ import type { ProfileProgress } from '../../progress/progress'
 import { daysLabel } from './useProgress'
 
 /** Seria, nutki i cel dzienny – zawsze na widoku, żeby postęp „było widać”. */
-export default function ProgressHeader({ progress }: { progress: ProfileProgress }) {
+interface Props {
+  progress: ProfileProgress
+  /** Zdobyte / wszystkie odznaki – znaczek 🏅 otwiera gablotę. */
+  badges: { earned: number; total: number }
+  onOpenBadges(): void
+}
+
+export default function ProgressHeader({ progress, badges, onOpenBadges }: Props) {
   const { streak, level, xp, todaySeconds, goalSeconds } = progress
   const todayMinutes = Math.floor(todaySeconds / 60)
   const goalMinutes = goalSeconds / 60
@@ -27,6 +34,10 @@ export default function ProgressHeader({ progress }: { progress: ProfileProgress
         <span className="stat" title={`Poziom ${level.level}: ${level.name}`} aria-label={`${xp} nutek, poziom ${level.level}`}>
           ⭐ {xp} <small>poz. {level.level}</small>
         </span>
+        <button className="stat stat-button" onClick={onOpenBadges} aria-label={`Odznaki: ${badges.earned} z ${badges.total}`}>
+          🏅 {badges.earned}
+          <small>/{badges.total}</small>
+        </button>
       </div>
       <div className="goal" aria-label={`Cel dzienny: ${todayMinutes} z ${goalMinutes} minut`}>
         <div className="goal-bar">

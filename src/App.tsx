@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import TunerScreen from './features/tuner/TunerScreen'
 import MetronomeScreen from './features/metronome/MetronomeScreen'
 import { ProfileProvider, useProfiles } from './features/profiles/ProfileContext'
 import ProfileChip from './features/profiles/ProfileChip'
 import ProfilePicker from './features/profiles/ProfilePicker'
+import BadgeCase from './features/badges/BadgeCase'
 import PracticeArea from './features/practice/PracticeArea'
 import { useGoalWatcher, useProgress } from './features/progress/useProgress'
 
@@ -19,8 +20,10 @@ export default function App() {
 
 function Shell() {
   const { activeProfile, selectProfile, saveFailed } = useProfiles()
-  const { progress } = useProgress()
+  const { progress, badges } = useProgress()
   const [tab, setTab] = useState<Tab>('tuner')
+  const [badgeCaseOpen, setBadgeCaseOpen] = useState(false)
+  const closeBadgeCase = useCallback(() => setBadgeCaseOpen(false), [])
   useGoalWatcher()
 
   return (
@@ -36,7 +39,15 @@ function Shell() {
             <ProfileChip profile={activeProfile} onClick={() => selectProfile(null)} />
           </header>
           {/* key: zmiana osoby kończy sesję ćwiczenia (i zapisuje jej resztę) */}
-          {progress && <PracticeArea key={activeProfile.id} profileId={activeProfile.id} progress={progress} />}
+          {progress && (
+            <PracticeArea
+              key={activeProfile.id}
+              profileId={activeProfile.id}
+              progress={progress}
+              badges={{ earned: badges.filter((b) => b.earnedOn).length, total: badges.length }}
+              onOpenBadges={() => setBadgeCaseOpen(true)}
+            />
+          )}
           <nav className="tabs">
             <button className={tab === 'tuner' ? 'tab active' : 'tab'} onClick={() => setTab('tuner')}>
               🎸 Stroik
@@ -49,6 +60,7 @@ function Shell() {
           <main className="screen" key={activeProfile.id}>
             {tab === 'tuner' ? <TunerScreen /> : <MetronomeScreen />}
           </main>
+          {badgeCaseOpen && progress && <BadgeCase badges={badges} progress={progress} onClose={closeBadgeCase} />}
         </>
       )}
     </div>

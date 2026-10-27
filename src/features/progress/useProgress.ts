@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { localDay } from '../../data/model'
+import { computeBadges } from '../../progress/badges'
 import { computeProgress, familyStreak, pendingGoalEvent } from '../../progress/progress'
 import { useProfiles } from '../profiles/ProfileContext'
 
@@ -21,6 +22,7 @@ export function useProgress() {
   return useMemo(
     () => ({
       progress: activeProfile ? computeProgress(data.events, activeProfile, today) : null,
+      badges: activeProfile ? computeBadges(data.events, activeProfile, profiles, today) : [],
       family: familyStreak(data.events, profiles, today),
     }),
     [data.events, profiles, activeProfile, today],
