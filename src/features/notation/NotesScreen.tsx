@@ -31,8 +31,9 @@ export default function NotesScreen() {
       <div className="note-name" style={{ color }}>
         {note.name}
       </div>
+      {note.sharp && <p className="note-spoken">czytamy: „{note.spoken}”</p>}
       <p className="note-where">{where}</p>
-      <Staff midi={note.midi} color={color} label={`Nuta ${note.name} na pięciolinii`} />
+      <Staff midi={note.midi} color={color} label={`Nuta ${note.spoken} na pięciolinii`} />
       <Fretboard note={note} />
       <div className="notes-controls">
         <button className="notes-button" onClick={() => move(-1)} aria-label="Niższa nuta">

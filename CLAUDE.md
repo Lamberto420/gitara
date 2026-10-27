@@ -75,7 +75,10 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 
 ## Konwencje
 - Teksty w UI po polsku i **neutralne płciowo** (profil może należeć do każdego, np. „tej osoby”, „wszyscy”).
-- Struna 2 nazywa się **H** (polska notacja).
+- Struna 2 nazywa się **H** (polska notacja). Półtony zapisujemy krzyżykami (F♯, C♯…), a czytamy
+  po polsku: fis, cis, gis, dis, ais (`music/firstPosition.ts`). Po polsku **B = B♭**, więc A♯ to „ais”, nigdy „B”.
+- Kolor nuty = kolor struny (`features/notation/stringColors.ts`) – ten sam na pięciolinii, gryfie i w nazwie.
+- Gryf rysujemy poziomo, struna 1 na górze (jak w tabulaturze); pusta struna = kółko „0” przed siodełkiem.
 - Duże elementy dotykowe (≥ 48 px). W siatkach CSS używaj `minmax(0, 1fr)`, a fieldset potrzebuje
   `min-width: 0` – inaczej treść (emoji) wystaje poza ekran telefonu.
 - Komentarze w kodzie po polsku, wyjaśniają „dlaczego”.
@@ -94,6 +97,9 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
   `--use-fake-ui-for-media-stream --use-fake-device-for-media-stream --use-file-for-fake-audio-capture=ton.wav`
   (ton z `ffmpeg -f lavfi -i sine=frequency=110`), dźwięk bez gestu: `--autoplay-policy=no-user-gesture-required`.
   Poczekaj, aż serwer Vite odpowie, zanim otworzysz stronę.
+  `el.click()` przez CDP nie jest gestem użytkownika – bez `--autoplay-policy` AudioContext nie wystartuje.
+  Vite zatrzymuj po PID z portu (`ss -ltnp`), nie `pkill -f` – wzorzec trafia też we własną powłokę.
+  Ciszę do testów: `ffmpeg -f lavfi -i anullsrc`; kilka tonów po kolei: `concat` kilku `sine`.
 - Układ sprawdzaj pomiarem (brak poziomego przewijania) przy szerokościach 320, 390 i 768 px.
 
 ## Plan (stan na 2026-10-27)
@@ -101,7 +107,9 @@ Zrobione: stroik (auto + blokada struny + dźwięk wzorcowy), metronom (tempo, m
 Wake Lock), PWA, publikacja, profile z kopią zapasową, silnik postępu z nagłówkiem (seria, nutki, cel),
 licznik „Ćwiczę 🎸” (przycisk pod paskiem postępu, działa na każdej zakładce) z bonusami za
 metronom i nastrojenie gitary, 16–17 odznak z gablotą (🏅 w nagłówku) i świętowaniem,
-komponenty pięciolinii i gryfu + zakładka „🎼 Nuty” (ściąga I pozycji, tylko nuty naturalne).
+komponenty pięciolinii i gryfu + zakładka „🎼 Nuty” (ściąga I pozycji: 24 nuty z krzyżykami,
+„Posłuchaj”, „Losuj”; bez nutek ⭐ – to podgląd, punkty da gra). `FIRST_POSITION_NATURALS` = łatwiejszy
+zestaw 17 nut bez krzyżyków (np. pierwszy poziom gry).
 
 Dalej, w tej kolejności:
 4. **Gra „Zagraj nutę”** (I pozycja, sprawdzanie mikrofonem), potem edytor ćwiczeń dla taty.

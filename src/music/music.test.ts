@@ -1,12 +1,23 @@
 import { describe, expect, it } from 'vitest'
-import { FIRST_POSITION, naturalName } from './firstPosition'
-import { guitarStaffPosition, ledgerLines, staffPosition, stemUp } from './staff'
+import { FIRST_POSITION, FIRST_POSITION_NATURALS, noteName } from './firstPosition'
+import { guitarStaffPosition, hasSharp, ledgerLines, staffPosition, stemUp } from './staff'
 
 const label = (n: (typeof FIRST_POSITION)[number]) => `${n.name}${n.octave}:${n.string}/${n.fret}`
 
 describe('FIRST_POSITION', () => {
-  it('17 nut naturalnych od E2 do G4, każda struna od pustej do 3. progu', () => {
+  it('24 nuty: każda struna od pustej do 3. progu, chromatycznie od E2 do G4', () => {
     expect(FIRST_POSITION.map(label)).toEqual([
+      'E2:6/0', 'F2:6/1', 'F♯2:6/2', 'G2:6/3',
+      'A2:5/0', 'A♯2:5/1', 'H2:5/2', 'C3:5/3',
+      'D3:4/0', 'D♯3:4/1', 'E3:4/2', 'F3:4/3',
+      'G3:3/0', 'G♯3:3/1', 'A3:3/2', 'A♯3:3/3',
+      'H3:2/0', 'C4:2/1', 'C♯4:2/2', 'D4:2/3',
+      'E4:1/0', 'F4:1/1', 'F♯4:1/2', 'G4:1/3',
+    ])
+  })
+
+  it('17 nut naturalnych bez krzyżyków', () => {
+    expect(FIRST_POSITION_NATURALS.map(label)).toEqual([
       'E2:6/0', 'F2:6/1', 'G2:6/3',
       'A2:5/0', 'H2:5/2', 'C3:5/3',
       'D3:4/0', 'E3:4/2', 'F3:4/3',
@@ -20,10 +31,11 @@ describe('FIRST_POSITION', () => {
     for (const n of FIRST_POSITION) expect(n.finger).toBe(n.fret)
   })
 
-  it('polska nazwa H, dźwięki z krzyżykiem bez nazwy', () => {
-    expect(naturalName(59)).toBe('H')
-    expect(naturalName(58)).toBeNull() // B / A♯
-    expect(naturalName(66)).toBeNull() // F♯
+  it('polskie nazwy: H, a krzyżyki czytane fis/cis/gis/dis/ais (A♯ to nie „B”!)', () => {
+    expect(noteName(59)).toEqual({ name: 'H', spoken: 'h', sharp: false })
+    expect(noteName(58)).toEqual({ name: 'A♯', spoken: 'ais', sharp: true })
+    expect(noteName(66)).toEqual({ name: 'F♯', spoken: 'fis', sharp: true })
+    expect([61, 63, 68].map((m) => noteName(m).spoken)).toEqual(['cis', 'dis', 'gis'])
   })
 })
 
@@ -61,7 +73,11 @@ describe('pięciolinia', () => {
     expect(stemUp(4)).toBe(false)
   })
 
-  it('dźwięk z krzyżykiem jeszcze nieobsługiwany – wyraźny błąd zamiast złej pozycji', () => {
-    expect(() => staffPosition(66)).toThrow()
+  it('krzyżyk: nuta na miejscu nuty o półton niższej, ze znakiem ♯', () => {
+    expect(staffPosition(66)).toBe(staffPosition(65)) // F♯5 tam, gdzie F5
+    expect(guitarStaffPosition(42)).toBe(-6) // F♯2 → zapis F♯3, na trzeciej linii dodanej
+    expect(hasSharp(66)).toBe(true)
+    expect(hasSharp(65)).toBe(false)
+    expect(FIRST_POSITION.filter((n) => hasSharp(n.midi)).map((n) => n.name)).toEqual(['F♯', 'A♯', 'D♯', 'G♯', 'A♯', 'C♯', 'F♯'])
   })
 })

@@ -1,4 +1,4 @@
-import { guitarStaffPosition, ledgerLines, stemUp } from '../../music/staff'
+import { guitarStaffPosition, hasSharp, ledgerLines, stemUp } from '../../music/staff'
 
 /** Pół odstępu między liniami – jedna „pozycja” nuty. */
 const HALF = 5
@@ -25,6 +25,18 @@ const CLEF = [
   `L 24 ${G + 20}`,
   `C 25 ${G + 26} 18 ${G + 28} 15 ${G + 24}`,
 ].join(' ')
+
+/** Krzyżyk przed główką: dwie pionowe kreski i dwie grubsze, skośne poprzeczki. */
+function Sharp({ x, cy, color }: { x: number; cy: number; color: string }) {
+  return (
+    <g stroke={color} strokeLinecap="butt">
+      <line x1={x - 2.5} x2={x - 2.5} y1={cy - 11} y2={cy + 13} strokeWidth="1.3" />
+      <line x1={x + 2.5} x2={x + 2.5} y1={cy - 13} y2={cy + 11} strokeWidth="1.3" />
+      <line x1={x - 6} x2={x + 6} y1={cy - 2} y2={cy - 6} strokeWidth="3" />
+      <line x1={x - 6} x2={x + 6} y1={cy + 6} y2={cy + 2} strokeWidth="3" />
+    </g>
+  )
+}
 
 interface Props {
   /** Wysokość BRZMIENIA (midi) – komponent sam przesuwa zapis o oktawę w górę. */
@@ -56,6 +68,7 @@ export default function Staff({ midi, color = 'currentColor', label }: Props) {
           {ledgerLines(position).map((p) => (
             <line key={p} x1={NOTE_X - 13} x2={NOTE_X + 13} y1={y(p)} y2={y(p)} stroke="currentColor" strokeWidth="1.2" />
           ))}
+          {hasSharp(midi!) && <Sharp x={NOTE_X - 22} cy={y(position)} color={color} />}
           <ellipse
             cx={NOTE_X}
             cy={y(position)}
