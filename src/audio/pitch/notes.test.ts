@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { STANDARD_TUNING, analyze, cents, isGuitarPitch, midiToFreq, nearestString, tuneStatus } from './notes'
+import { STANDARD_TUNING, analyze, cents, freqToMidi, isGuitarPitch, midiToFreq, nearestString, tuneStatus } from './notes'
 
 describe('isGuitarPitch', () => {
   it('wszystkie puste struny i wysokie progi to gitara', () => {
@@ -64,5 +64,12 @@ describe('notes', () => {
     it('z blokadą wykrywa zagraną inną strunę', () => {
       expect(analyze(a.freq, lowE).wrongString).toBe(true)
     })
+  })
+})
+
+describe('freqToMidi', () => {
+  it('odwraca midiToFreq', () => {
+    expect(freqToMidi(440)).toBe(69)
+    expect(freqToMidi(midiToFreq(40))).toBeCloseTo(40, 10)
   })
 })

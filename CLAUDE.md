@@ -30,6 +30,7 @@ src/audio/      czysta logika dźwięku: pitch/ (YIN, nuty, mediana), metronome/
 src/data/       model danych, łączenie (merge), migracje, zapis, kopia zapasowa
 src/progress/   silnik postępu: nutki, poziomy, seria, ochrona, rodzinna seria, odznaki (czyste funkcje)
 src/music/      nuty I pozycji (struna/próg/palec) i miejsce na pięciolinii (czyste funkcje)
+src/game/       gra „Zagraj nutę”: rozpoznawanie nuty (noteListener), runda, poziomy i nutki (czyste funkcje)
 src/features/   ekrany i hooki React: tuner/, metronome/, profiles/, progress/, practice/, badges/,
                 celebrations/, notation/ (<Staff>, <Fretboard> – własne SVG, kolor nuty = kolor struny)
 src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca false przy błędzie)
@@ -57,6 +58,8 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 ## Zasady grywalizacji (ustalone)
 - ⭐ Nutki: 2 za minutę grania (3, gdy gra metronom ≥ pół minuty), 10 za spełniony cel dzienny,
   3 raz dziennie za nastrojenie wszystkich 6 strun (`tuned:<profileId>:<dzień>`).
+  Gra „Zagraj nutę” (zdarzenie `note-game`, runda 10 nut): Łatwy (bez krzyżyków, gryf widoczny) +2 za rundę;
+  Trudny (24 nuty, bez gryfu) +1 za nutę trafioną za pierwszym razem i +2 za rundę.
   Nie dajemy nutek za samo włączenie narzędzia – tylko za granie/strojenie.
 - Poziomy: próg poziomu n = 25·n·(n−1) (0, 50, 150, 300, 500…), nazwy w `progress/levels.ts`.
 - Cel dzienny: minuty grania (10/15/20 w profilu), liczone przez mikrofon – tylko gdy słychać gitarę
@@ -113,7 +116,8 @@ zestaw 17 nut bez krzyżyków (np. pierwszy poziom gry).
 
 Dalej, w tej kolejności:
 4. **Gra „Zagraj nutę”** (I pozycja, sprawdzanie mikrofonem), potem edytor ćwiczeń dla taty.
-5. Później: trener tempa w metronomie; automatyczna synchronizacja przez Firebase, jeśli ręczne
+5. Przegląd całej punktacji ⭐ (czy nie dajemy za dużo / za mało za poszczególne ćwiczenia).
+6. Później: trener tempa w metronomie; automatyczna synchronizacja przez Firebase, jeśli ręczne
    kopie okażą się uciążliwe (wymaga zmiany zasady „brak backendu”, reguł dostępu tylko dla
    kont rodziny i sprawdzenia aktualnych limitów darmowego planu).
 

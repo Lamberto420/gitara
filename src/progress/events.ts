@@ -73,3 +73,27 @@ export function tunedEvent(profileId: string, now = new Date()): TunedEvent {
 export function tunedEventId(profileId: string, day: string): string {
   return `tuned:${profileId}:${day}`
 }
+
+export interface NoteGameEvent extends ActivityEvent {
+  type: 'note-game'
+  /** Poziom gry („easy” / „hard”) – zapisany jako tekst, żeby stare dane przetrwały nowe poziomy. */
+  level: string
+  /** Liczba nut w rundzie. */
+  notes: number
+  /** Ile nut trafiono za pierwszym razem. */
+  firstTry: number
+  xp: number
+}
+
+export function isNoteGame(e: ActivityEvent): e is NoteGameEvent {
+  return e.type === 'note-game' && typeof e.notes === 'number' && typeof e.firstTry === 'number'
+}
+
+/** Ukończona runda gry „Zagraj nutę”. Nutki liczy gra (zależą od poziomu) i zapisujemy je tutaj. */
+export function noteGameEvent(
+  profileId: string,
+  result: { level: string; notes: number; firstTry: number; xp: number },
+  now = new Date(),
+): NoteGameEvent {
+  return { id: crypto.randomUUID(), profileId, at: now.getTime(), day: localDay(now), type: 'note-game', ...result }
+}

@@ -89,3 +89,8 @@ export const GUITAR_MAX_HZ = 1400
 export function isGuitarPitch(freq: number | null): boolean {
   return freq !== null && freq >= GUITAR_MIN_HZ && freq <= GUITAR_MAX_HZ
 }
+
+/** Częstotliwość → numer MIDI z ułamkiem (69 = A4). Zaokrąglenie daje najbliższy półton. */
+export function freqToMidi(freq: number, a4 = A4): number {
+  return 69 + 12 * Math.log2(freq / a4)
+}
