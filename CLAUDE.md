@@ -28,8 +28,10 @@ Publikacja: https://lamberto420.github.io/gitara/ (repo publiczne: github.com/La
 ```
 src/audio/      czysta logika dźwięku: pitch/ (YIN, nuty, mediana), metronome/ (harmonogram, tap tempo)
 src/data/       model danych, łączenie (merge), migracje, zapis, kopia zapasowa
-src/progress/   silnik postępu: nutki, poziomy, seria, ochrona, rodzinna seria (czyste funkcje)
-src/features/   ekrany i hooki React: tuner/, metronome/, profiles/, progress/
+src/progress/   silnik postępu: nutki, poziomy, seria, ochrona, rodzinna seria, odznaki (czyste funkcje)
+src/music/      nuty I pozycji (struna/próg/palec) i miejsce na pięciolinii (czyste funkcje)
+src/features/   ekrany i hooki React: tuner/, metronome/, profiles/, progress/, practice/, badges/,
+                celebrations/, notation/ (<Staff>, <Fretboard> – własne SVG, kolor nuty = kolor struny)
 src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca false przy błędzie)
 ```
 - **Logika = czysty TypeScript z testami**; komponenty React tylko ją wywołują i wyświetlają.
@@ -98,10 +100,10 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 Zrobione: stroik (auto + blokada struny + dźwięk wzorcowy), metronom (tempo, metrum, tap tempo,
 Wake Lock), PWA, publikacja, profile z kopią zapasową, silnik postępu z nagłówkiem (seria, nutki, cel),
 licznik „Ćwiczę 🎸” (przycisk pod paskiem postępu, działa na każdej zakładce) z bonusami za
-metronom i nastrojenie gitary, 16–17 odznak z gablotą (🏅 w nagłówku) i świętowaniem.
+metronom i nastrojenie gitary, 16–17 odznak z gablotą (🏅 w nagłówku) i świętowaniem,
+komponenty pięciolinii i gryfu + zakładka „🎼 Nuty” (ściąga I pozycji, tylko nuty naturalne).
 
 Dalej, w tej kolejności:
-3. **Komponenty gryfu i pięciolinii** (własne SVG).
 4. **Gra „Zagraj nutę”** (I pozycja, sprawdzanie mikrofonem), potem edytor ćwiczeń dla taty.
 5. Później: trener tempa w metronomie; automatyczna synchronizacja przez Firebase, jeśli ręczne
    kopie okażą się uciążliwe (wymaga zmiany zasady „brak backendu”, reguł dostępu tylko dla

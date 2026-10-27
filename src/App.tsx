@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react'
 import TunerScreen from './features/tuner/TunerScreen'
 import MetronomeScreen from './features/metronome/MetronomeScreen'
+import NotesScreen from './features/notation/NotesScreen'
 import { ProfileProvider, useProfiles } from './features/profiles/ProfileContext'
 import ProfileChip from './features/profiles/ProfileChip'
 import ProfilePicker from './features/profiles/ProfilePicker'
@@ -10,7 +11,7 @@ import { useCelebrations } from './features/celebrations/useCelebrations'
 import PracticeArea from './features/practice/PracticeArea'
 import { useGoalWatcher, useProgress } from './features/progress/useProgress'
 
-type Tab = 'tuner' | 'metronome'
+type Tab = 'tuner' | 'metronome' | 'notes'
 
 export default function App() {
   return (
@@ -53,15 +54,21 @@ function Shell() {
           )}
           <nav className="tabs">
             <button className={tab === 'tuner' ? 'tab active' : 'tab'} onClick={() => setTab('tuner')}>
-              🎸 Stroik
+              <span className="tab-icon">🎸</span>
+              Stroik
             </button>
             <button className={tab === 'metronome' ? 'tab active' : 'tab'} onClick={() => setTab('metronome')}>
-              🥁 Metronom
+              <span className="tab-icon">🥁</span>
+              Metronom
+            </button>
+            <button className={tab === 'notes' ? 'tab active' : 'tab'} onClick={() => setTab('notes')}>
+              <span className="tab-icon">🎼</span>
+              Nuty
             </button>
           </nav>
           {/* key: po zmianie osoby ekrany startują od nowa, z jej ustawieniami */}
           <main className="screen" key={activeProfile.id}>
-            {tab === 'tuner' ? <TunerScreen /> : <MetronomeScreen />}
+            {tab === 'tuner' ? <TunerScreen /> : tab === 'metronome' ? <MetronomeScreen /> : <NotesScreen />}
           </main>
           {badgeCaseOpen && progress && <BadgeCase badges={badges} progress={progress} onClose={closeBadgeCase} />}
           {celebrations.current && (
