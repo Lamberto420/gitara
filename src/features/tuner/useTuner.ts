@@ -3,6 +3,7 @@ import { resumeAudio } from '../../audio/audioContext'
 import { microphoneErrorMessage, openMicrophone, type Microphone } from '../../audio/microphone'
 import { createMedianFilter } from '../../audio/pitch/median'
 import { detectPitch, rms } from '../../audio/pitch/yin'
+import { isReferenceTonePlaying } from '../../audio/referenceTone'
 
 /** Poniżej tej głośności traktujemy dźwięk jako ciszę / szum tła. */
 const SILENCE_RMS = 0.01
@@ -44,6 +45,7 @@ export function useTuner() {
         frameRef.current = requestAnimationFrame(loop)
         // Analiza co drugą klatkę (~30×/s) – wystarczy dla oka, oszczędza baterię telefonu.
         if (frame++ % 2) return
+        if (isReferenceTonePlaying(ctx)) return
 
         mic.analyser.getFloatTimeDomainData(buffer)
         const now = performance.now()

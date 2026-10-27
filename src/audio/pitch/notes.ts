@@ -51,3 +51,29 @@ export function tuneStatus(c: number): TuneStatus {
   if (abs <= CLOSE_CENTS) return 'close'
   return 'far'
 }
+
+/** Powyżej tej odległości od zablokowanej struny pewnie gra inna struna. */
+export const WRONG_STRING_CENTS = 300
+
+export interface Reading {
+  string: GuitarString
+  cents: number
+  status: TuneStatus
+  /** Struna zablokowana, a dźwięk jest od niej dalej niż ±3 półtony. */
+  wrongString: boolean
+}
+
+/**
+ * Porównuje częstotliwość ze struną: zablokowaną (gdy `locked`) albo najbliższą (tryb auto).
+ * Blokada pomaga przy mocno rozstrojonej strunie, którą tryb auto wziąłby za sąsiednią.
+ */
+export function analyze(freq: number, locked: GuitarString | null = null): Reading {
+  const string = locked ?? nearestString(freq)
+  const c = cents(freq, string.freq)
+  return {
+    string,
+    cents: c,
+    status: tuneStatus(c),
+    wrongString: locked !== null && Math.abs(c) > WRONG_STRING_CENTS,
+  }
+}

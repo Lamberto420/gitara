@@ -215,3 +215,56 @@ button {
     transform: scale(1.15);
   }
 }
+
+/* --- Przyciski strun --- */
+
+.strings {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.string-button {
+  min-height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid transparent;
+  border-radius: 14px;
+  background: var(--muted);
+  color: var(--text);
+}
+
+.string-button.auto {
+  grid-column: 1 / -1; /* „Auto” zajmuje cały pierwszy rząd */
+  min-height: 52px;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.string-button.selected {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 0 var(--accent-dark);
+}
+
+.string-button.detected {
+  border-color: var(--accent);
+}
+
+.string-name {
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.auto .string-name {
+  font-size: 1.3rem;
+}
+
+.string-number {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
