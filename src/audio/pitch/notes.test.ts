@@ -1,5 +1,18 @@
 import { describe, expect, it } from 'vitest'
-import { STANDARD_TUNING, analyze, cents, midiToFreq, nearestString, tuneStatus } from './notes'
+import { STANDARD_TUNING, analyze, cents, isGuitarPitch, midiToFreq, nearestString, tuneStatus } from './notes'
+
+describe('isGuitarPitch', () => {
+  it('wszystkie puste struny i wysokie progi to gitara', () => {
+    for (const s of STANDARD_TUNING) expect(isGuitarPitch(s.freq)).toBe(true)
+    expect(isGuitarPitch(midiToFreq(64 + 19))).toBe(true) // 19. próg struny E4
+  })
+
+  it('brak wysokości, buczenie sieci i pisk to nie gitara', () => {
+    expect(isGuitarPitch(null)).toBe(false)
+    expect(isGuitarPitch(50)).toBe(false)
+    expect(isGuitarPitch(3000)).toBe(false)
+  })
+})
 
 describe('notes', () => {
   it('A4 to 440 Hz, a struny mają znane częstotliwości', () => {

@@ -77,3 +77,15 @@ export function analyze(freq: number, locked: GuitarString | null = null): Readi
     wrongString: locked !== null && Math.abs(c) > WRONG_STRING_CENTS,
   }
 }
+
+/**
+ * Zakres wysokości, który licznik ćwiczeń uznaje za grę na gitarze: od nieco poniżej E2
+ * (rozstrojona struna) do ok. 19. progu na strunie E4. Szum i stuknięcia nie mają wysokości
+ * w ogóle, a piski i świsty wypadają powyżej.
+ */
+export const GUITAR_MIN_HZ = 70
+export const GUITAR_MAX_HZ = 1400
+
+export function isGuitarPitch(freq: number | null): boolean {
+  return freq !== null && freq >= GUITAR_MIN_HZ && freq <= GUITAR_MAX_HZ
+}
