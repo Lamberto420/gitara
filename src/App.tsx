@@ -4,8 +4,8 @@ import MetronomeScreen from './features/metronome/MetronomeScreen'
 import { ProfileProvider, useProfiles } from './features/profiles/ProfileContext'
 import ProfileChip from './features/profiles/ProfileChip'
 import ProfilePicker from './features/profiles/ProfilePicker'
-import ProgressHeader from './features/progress/ProgressHeader'
-import { useProgress } from './features/progress/useProgress'
+import PracticeArea from './features/practice/PracticeArea'
+import { useGoalWatcher, useProgress } from './features/progress/useProgress'
 
 type Tab = 'tuner' | 'metronome'
 
@@ -21,6 +21,7 @@ function Shell() {
   const { activeProfile, selectProfile, saveFailed } = useProfiles()
   const { progress } = useProgress()
   const [tab, setTab] = useState<Tab>('tuner')
+  useGoalWatcher()
 
   return (
     <div className="app">
@@ -34,7 +35,8 @@ function Shell() {
           <header className="header">
             <ProfileChip profile={activeProfile} onClick={() => selectProfile(null)} />
           </header>
-          {progress && <ProgressHeader progress={progress} />}
+          {/* key: zmiana osoby kończy sesję ćwiczenia (i zapisuje jej resztę) */}
+          {progress && <PracticeArea key={activeProfile.id} profileId={activeProfile.id} progress={progress} />}
           <nav className="tabs">
             <button className={tab === 'tuner' ? 'tab active' : 'tab'} onClick={() => setTab('tuner')}>
               🎸 Stroik

@@ -774,3 +774,53 @@ h1 {
   font-size: 0.95rem;
   color: #7a6a58;
 }
+
+/* --- Ćwiczę 🎸 --- */
+
+.big-button.practice-start {
+  min-height: 72px;
+  font-size: 1.6rem;
+}
+
+.practice {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px 12px 16px;
+  border-radius: 24px;
+  background: var(--muted);
+  transition: background 0.3s;
+}
+
+/* Zielone tło = „liczę!” – dziecko od razu widzi, że granie się zalicza. */
+.practice.active {
+  background: #d5f5dd;
+}
+
+.practice-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.practice-clock {
+  font-size: 2.2rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.practice-stop {
+  min-height: 56px;
+  padding: 0 18px;
+  font-size: 1.2rem;
+  font-weight: 800;
+  border: none;
+  border-radius: 16px;
+  background: var(--red);
+  color: white;
+  box-shadow: 0 4px 0 #a82a22;
+}
