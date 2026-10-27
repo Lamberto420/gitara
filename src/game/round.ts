@@ -45,12 +45,14 @@ export interface Round {
   index: number
   /** Ile nut trafiono bez wcześniejszej pomyłki. */
   firstTry: number
+  /** Dla każdej trafionej już nuty: czy za pierwszym razem (kropki postępu na ekranie). */
+  results: readonly boolean[]
   /** Czy przy bieżącej nucie była już pomyłka. */
   missed: boolean
 }
 
 export function newRound(level: LevelId, random: () => number = Math.random): Round {
-  return { level, notes: pickNotes(LEVELS[level].notes, ROUND_LENGTH, random), index: 0, firstTry: 0, missed: false }
+  return { level, notes: pickNotes(LEVELS[level].notes, ROUND_LENGTH, random), index: 0, firstTry: 0, results: [], missed: false }
 }
 
 export const isFinished = (r: Round) => r.index >= r.notes.length
@@ -59,7 +61,8 @@ export const currentNote = (r: Round): FretNote | null => r.notes[r.index] ?? nu
 /** Trafiona bieżąca nuta – przejście do następnej. */
 export function hit(r: Round): Round {
   if (isFinished(r)) return r
-  return { ...r, index: r.index + 1, firstTry: r.firstTry + (r.missed ? 0 : 1), missed: false }
+  const first = !r.missed
+  return { ...r, index: r.index + 1, firstTry: r.firstTry + (first ? 1 : 0), results: [...r.results, first], missed: false }
 }
 
 /** Zagrana inna nuta – bez kary, tylko ta nuta nie liczy się już „za pierwszym razem”. */

@@ -35,8 +35,12 @@ export function usePractice(profileId: string) {
   /** Fałsz po odmontowaniu – mikrofon włączony „za późno” trzeba od razu wyłączyć. */
   const aliveRef = useRef(true)
 
+  /** Trwa włączanie mikrofonu – drugie „start” (np. gra + przycisk naraz) nic nie robi. */
+  const startingRef = useRef(false)
+
   const start = useCallback(async () => {
-    if (stopRef.current) return
+    if (stopRef.current || startingRef.current) return
+    startingRef.current = true
     setStatus('starting')
     let mic: Microphone
     let ctx: AudioContext
@@ -48,6 +52,8 @@ export function usePractice(profileId: string) {
       setError(microphoneErrorMessage(e))
       setStatus('error')
       return
+    } finally {
+      startingRef.current = false
     }
 
     const tracker = createPracticeTracker()

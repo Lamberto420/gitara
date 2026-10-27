@@ -3,7 +3,12 @@ export interface Microphone {
   stop(): void
 }
 
-export async function openMicrophone(ctx: AudioContext): Promise<Microphone> {
+// Jeden wspólny strumień mikrofonu dla stroika, licznika „Ćwiczę” i gry – każdy dostaje własny
+// analizator. Drugi getUserMedia na iOS potrafi wyciszyć pierwszy, a tak działają jednocześnie.
+let shared: Promise<MediaStreamAudioSourceNode> | null = null
+let users = 0
+
+async function openSource(ctx: AudioContext): Promise<MediaStreamAudioSourceNode> {
   if (!navigator.mediaDevices?.getUserMedia) {
     // Brak API = strona nie jest otwarta przez HTTPS ani localhost.
     throw new DOMException('Brak bezpiecznego połączenia', 'SecurityError')
@@ -12,16 +17,40 @@ export async function openMicrophone(ctx: AudioContext): Promise<Microphone> {
     // Filtry „do rozmów” zniekształcają dźwięk instrumentu – wyłączamy je.
     audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
   })
-  const source = ctx.createMediaStreamSource(stream)
+  return ctx.createMediaStreamSource(stream)
+}
+
+function release(source: Promise<MediaStreamAudioSourceNode>) {
+  if (--users > 0) return
+  shared = null
+  // Ostatni użytkownik – wyłącz mikrofon (znika też kropka „nagrywanie” w przeglądarce).
+  source.then((s) => s.mediaStream.getTracks().forEach((t) => t.stop())).catch(() => {})
+}
+
+export async function openMicrophone(ctx: AudioContext): Promise<Microphone> {
+  users++
+  const source = (shared ??= openSource(ctx))
+  let node: MediaStreamAudioSourceNode
+  try {
+    node = await source
+  } catch (e) {
+    // Nieudane otwarcie: następna próba (np. po udzieleniu zgody) zapyta jeszcze raz.
+    if (shared === source) shared = null
+    users--
+    throw e
+  }
   const analyser = ctx.createAnalyser()
   analyser.fftSize = 4096 // ~85 ms dźwięku – starczy na kilka okresów najniższej struny E2
-  source.connect(analyser)
+  node.connect(analyser)
 
+  let stopped = false
   return {
     analyser,
     stop() {
-      source.disconnect()
-      stream.getTracks().forEach((track) => track.stop())
+      if (stopped) return
+      stopped = true
+      node.disconnect(analyser)
+      release(source)
     },
   }
 }

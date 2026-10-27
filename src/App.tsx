@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react'
 import TunerScreen from './features/tuner/TunerScreen'
 import MetronomeScreen from './features/metronome/MetronomeScreen'
 import NotesScreen from './features/notation/NotesScreen'
+import GameScreen from './features/game/GameScreen'
 import { ProfileProvider, useProfiles } from './features/profiles/ProfileContext'
 import ProfileChip from './features/profiles/ProfileChip'
 import ProfilePicker from './features/profiles/ProfilePicker'
@@ -9,9 +10,10 @@ import BadgeCase from './features/badges/BadgeCase'
 import CelebrationDialog from './features/celebrations/CelebrationDialog'
 import { useCelebrations } from './features/celebrations/useCelebrations'
 import PracticeArea from './features/practice/PracticeArea'
+import { PracticeProvider } from './features/practice/PracticeContext'
 import { useGoalWatcher, useProgress } from './features/progress/useProgress'
 
-type Tab = 'tuner' | 'metronome' | 'notes'
+type Tab = 'tuner' | 'metronome' | 'notes' | 'game'
 
 export default function App() {
   return (
@@ -38,15 +40,13 @@ function Shell() {
       {!activeProfile ? (
         <ProfilePicker />
       ) : (
-        <>
+        // key: zmiana osoby kończy sesję ćwiczenia (i zapisuje jej resztę), a ekrany startują od nowa
+        <PracticeProvider key={activeProfile.id} profileId={activeProfile.id}>
           <header className="header">
             <ProfileChip profile={activeProfile} onClick={() => selectProfile(null)} />
           </header>
-          {/* key: zmiana osoby kończy sesję ćwiczenia (i zapisuje jej resztę) */}
           {progress && (
             <PracticeArea
-              key={activeProfile.id}
-              profileId={activeProfile.id}
               progress={progress}
               badges={{ earned: badges.filter((b) => b.earnedOn).length, total: badges.length }}
               onOpenBadges={() => setBadgeCaseOpen(true)}
@@ -65,16 +65,27 @@ function Shell() {
               <span className="tab-icon">🎼</span>
               Nuty
             </button>
+            <button className={tab === 'game' ? 'tab active' : 'tab'} onClick={() => setTab('game')}>
+              <span className="tab-icon">🎯</span>
+              Gra
+            </button>
           </nav>
-          {/* key: po zmianie osoby ekrany startują od nowa, z jej ustawieniami */}
-          <main className="screen" key={activeProfile.id}>
-            {tab === 'tuner' ? <TunerScreen /> : tab === 'metronome' ? <MetronomeScreen /> : <NotesScreen />}
+          <main className="screen">
+            {tab === 'tuner' ? (
+              <TunerScreen />
+            ) : tab === 'metronome' ? (
+              <MetronomeScreen />
+            ) : tab === 'notes' ? (
+              <NotesScreen />
+            ) : (
+              <GameScreen />
+            )}
           </main>
           {badgeCaseOpen && progress && <BadgeCase badges={badges} progress={progress} onClose={closeBadgeCase} />}
           {celebrations.current && (
             <CelebrationDialog celebration={celebrations.current} onDone={celebrations.dismiss} />
           )}
-        </>
+        </PracticeProvider>
       )}
     </div>
   )

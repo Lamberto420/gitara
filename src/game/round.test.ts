@@ -56,7 +56,7 @@ describe('przebieg rundy', () => {
     r = hit(r)
     expect(r.missed).toBe(false)
     r = hit(r)
-    expect(r).toMatchObject({ index: 2, firstTry: 1 })
+    expect(r).toMatchObject({ index: 2, firstTry: 1, results: [false, true] })
   })
 })
 

@@ -32,7 +32,7 @@ src/progress/   silnik postępu: nutki, poziomy, seria, ochrona, rodzinna seria,
 src/music/      nuty I pozycji (struna/próg/palec) i miejsce na pięciolinii (czyste funkcje)
 src/game/       gra „Zagraj nutę”: rozpoznawanie nuty (noteListener), runda, poziomy i nutki (czyste funkcje)
 src/features/   ekrany i hooki React: tuner/, metronome/, profiles/, progress/, practice/, badges/,
-                celebrations/, notation/ (<Staff>, <Fretboard> – własne SVG, kolor nuty = kolor struny)
+                celebrations/, game/, notation/ (<Staff>, <Fretboard> – własne SVG, kolor nuty = kolor struny)
 src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca false przy błędzie)
 ```
 - **Logika = czysty TypeScript z testami**; komponenty React tylko ją wywołują i wyświetlają.
@@ -40,6 +40,9 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
   kluczową linię, sprawdź, że testy to łapią, przywróć.
 - `ProfileContext` (`useProfiles()`): dane aplikacji, aktywny profil, `addEvents()`, import kopii.
   `useProgress()` / `useToday()` (zmienia się o północy) w `features/progress/`.
+- `PracticeProvider` (`usePracticeSession()`): sesja „Ćwiczę 🎸” dla całej aplikacji – gra włącza ją sama.
+- Mikrofon: `openMicrophone()` daje jeden wspólny strumień (licznik użytkowników) z osobnym analizatorem
+  dla każdego – drugi `getUserMedia` na iOS potrafi wyciszyć pierwszy.
 
 ## Model danych (ważne – nie łam tych zasad)
 - **Postęp to log zdarzeń** (`ActivityEvent` z unikalnym `id`), a nie zagregowane liczniki.
@@ -64,7 +67,7 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 - Poziomy: próg poziomu n = 25·n·(n−1) (0, 50, 150, 300, 500…), nazwy w `progress/levels.ts`.
 - Cel dzienny: minuty grania (10/15/20 w profilu), liczone przez mikrofon – tylko gdy słychać gitarę
   (głośność + wysokość 70–1400 Hz, tolerancja 3 s przerwy; `progress/practiceTracker.ts`).
-  Licznik pomija własne dźwięki aplikacji: tyki (`isClickSounding`) i dźwięk wzorcowy.
+  Licznik i gra pomijają własne dźwięki aplikacji: tyki (`isClickSounding`), dźwięk wzorcowy, „dzyń” (`isChimePlaying`).
   Zapis co pełną minutę + reszta przy „Koniec”/schowaniu karty; `useGoalWatcher` dopisuje `goal`.
 - 🔥 Seria: dni z rzędu ze spełnionym celem; dzisiejszy dzień nie przerywa serii, dopóki trwa.
 - 🧊 Ochrona serii: +1 co 7 dni serii (maks. 2), zużywa się automatycznie przy opuszczonym dniu.

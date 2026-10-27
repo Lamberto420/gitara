@@ -1,6 +1,6 @@
 import type { ProfileProgress } from '../../progress/progress'
 import ProgressHeader from '../progress/ProgressHeader'
-import { usePractice } from './usePractice'
+import { usePracticeSession } from './PracticeContext'
 
 /** „4:07” – czas sesji w minutach i sekundach. */
 function clock(seconds: number): string {
@@ -12,14 +12,13 @@ function clock(seconds: number): string {
  * dolicza na żywo sekundy, których licznik jeszcze nie zapisał (zapis idzie co pełną minutę).
  */
 interface Props {
-  profileId: string
   progress: ProfileProgress
   badges: { earned: number; total: number }
   onOpenBadges(): void
 }
 
-export default function PracticeArea({ profileId, progress, badges, onOpenBadges }: Props) {
-  const { status, error, playing, sessionSeconds, unsavedSeconds, start, stop } = usePractice(profileId)
+export default function PracticeArea({ progress, badges, onOpenBadges }: Props) {
+  const { status, error, playing, sessionSeconds, unsavedSeconds, start, stop } = usePracticeSession()
   const live = { ...progress, todaySeconds: progress.todaySeconds + unsavedSeconds }
 
   return (
