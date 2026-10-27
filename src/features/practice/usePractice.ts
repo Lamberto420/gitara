@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { resumeAudio } from '../../audio/audioContext'
-import { isClickSounding } from '../../audio/metronome/click'
+import { isClickSounding, isMetronomeRunning } from '../../audio/metronome/click'
 import { microphoneErrorMessage, openMicrophone, type Microphone } from '../../audio/microphone'
 import { isGuitarPitch } from '../../audio/pitch/notes'
 import { detectPitch, rms } from '../../audio/pitch/yin'
@@ -57,10 +57,10 @@ export function usePractice(profileId: string) {
     let frame = 0
     let raf = 0
 
-    const save = (seconds: number) => {
+    const save = (seconds: number, withMetronome = false) => {
       if (seconds <= 0) return
       savedSeconds += seconds
-      addEvents([practiceEvent(profileId, seconds)])
+      addEvents([practiceEvent(profileId, seconds, new Date(), withMetronome)])
     }
     // Karta chowa się w tle (zamknięcie aplikacji, zgaszony ekran) – zapisz resztę, póki można.
     const onHide = () => {
@@ -77,8 +77,10 @@ export function usePractice(profileId: string) {
       mic.analyser.getFloatTimeDomainData(buffer)
       const heard = rms(buffer) >= SILENCE_RMS && isGuitarPitch(detectPitch(buffer, ctx.sampleRate))
       const now = performance.now()
-      tracker.update(now, heard)
-      save(tracker.takeFullMinutes() * 60)
+      tracker.update(now, heard, isMetronomeRunning(ctx))
+      const { minutes, withMetronome } = tracker.takeFullMinutes()
+      save((minutes - withMetronome) * 60)
+      save(withMetronome * 60, true)
 
       setPlaying(tracker.isPlaying(now))
       setUnsavedSeconds(tracker.pendingSeconds())

@@ -4,8 +4,8 @@ import { HEARD_GRACE_MS, createPracticeTracker } from './practiceTracker'
 const FRAME_MS = 33 // ~30 odczytów na sekundę, jak w aplikacji
 
 /** Symuluje odczyty co FRAME_MS od `from` do `to` (ms) z tym samym stanem „słychać grę”. */
-function feed(t: ReturnType<typeof createPracticeTracker>, from: number, to: number, heard: boolean) {
-  for (let at = from; at <= to; at += FRAME_MS) t.update(at, heard)
+function feed(t: ReturnType<typeof createPracticeTracker>, from: number, to: number, heard: boolean, metronome = false) {
+  for (let at = from; at <= to; at += FRAME_MS) t.update(at, heard, metronome)
 }
 
 describe('createPracticeTracker', () => {
@@ -56,10 +56,28 @@ describe('createPracticeTracker', () => {
   it('pełne minuty zabiera do zapisu, reszta czeka na koniec', () => {
     const t = createPracticeTracker()
     feed(t, 0, 150_000, true) // 2,5 min
-    expect(t.takeFullMinutes()).toBe(2)
-    expect(t.takeFullMinutes()).toBe(0)
+    expect(t.takeFullMinutes()).toEqual({ minutes: 2, withMetronome: 0 })
+    expect(t.takeFullMinutes().minutes).toBe(0)
     expect(t.pendingSeconds()).toBe(29)
     expect(t.takeRest()).toBe(29)
     expect(t.pendingSeconds()).toBe(0)
+  })
+
+  it('minuty z metronomem: liczy się, gdy grał przez co najmniej pół minuty', () => {
+    const t = createPracticeTracker()
+    feed(t, 0, 40_000, true, true) // 40 s z metronomem
+    feed(t, 40_033, 125_000, true, false) // potem bez
+    expect(t.takeFullMinutes()).toEqual({ minutes: 2, withMetronome: 1 })
+  })
+
+  it('krótki metronom nie daje bonusu, a niewykorzystany nie przechodzi na kolejną sesję', () => {
+    const t = createPracticeTracker()
+    feed(t, 0, 20_000, true, true)
+    feed(t, 20_033, 61_000, true, false)
+    expect(t.takeFullMinutes()).toEqual({ minutes: 1, withMetronome: 0 })
+    feed(t, 61_033, 70_000, true, true)
+    t.takeRest()
+    feed(t, 70_033, 135_000, true, false)
+    expect(t.takeFullMinutes()).toEqual({ minutes: 1, withMetronome: 0 })
   })
 })

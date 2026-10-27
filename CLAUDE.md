@@ -53,9 +53,14 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 - Aktywny profil to ustawienie urządzenia (`gitara:active-profile`), nie trafia do kopii.
 
 ## Zasady grywalizacji (ustalone)
-- ⭐ Nutki: 2 za minutę grania, 10 za spełniony cel dzienny.
+- ⭐ Nutki: 2 za minutę grania (3, gdy gra metronom ≥ pół minuty), 10 za spełniony cel dzienny,
+  3 raz dziennie za nastrojenie wszystkich 6 strun (`tuned:<profileId>:<dzień>`).
+  Nie dajemy nutek za samo włączenie narzędzia – tylko za granie/strojenie.
 - Poziomy: próg poziomu n = 25·n·(n−1) (0, 50, 150, 300, 500…), nazwy w `progress/levels.ts`.
-- Cel dzienny: minuty grania (10/15/20 w profilu), liczone przez mikrofon – tylko gdy słychać gitarę.
+- Cel dzienny: minuty grania (10/15/20 w profilu), liczone przez mikrofon – tylko gdy słychać gitarę
+  (głośność + wysokość 70–1400 Hz, tolerancja 3 s przerwy; `progress/practiceTracker.ts`).
+  Licznik pomija własne dźwięki aplikacji: tyki (`isClickSounding`) i dźwięk wzorcowy.
+  Zapis co pełną minutę + reszta przy „Koniec”/schowaniu karty; `useGoalWatcher` dopisuje `goal`.
 - 🔥 Seria: dni z rzędu ze spełnionym celem; dzisiejszy dzień nie przerywa serii, dopóki trwa.
 - 🧊 Ochrona serii: +1 co 7 dni serii (maks. 2), zużywa się automatycznie przy opuszczonym dniu.
 - Rodzinna seria (współpraca, bez rankingów): dni, w których każda osoba spełniła cel
@@ -86,12 +91,11 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 
 ## Plan (stan na 2026-10-27)
 Zrobione: stroik (auto + blokada struny + dźwięk wzorcowy), metronom (tempo, metrum, tap tempo,
-Wake Lock), PWA, publikacja, profile z kopią zapasową, silnik postępu z nagłówkiem (seria, nutki, cel).
+Wake Lock), PWA, publikacja, profile z kopią zapasową, silnik postępu z nagłówkiem (seria, nutki, cel),
+licznik „Ćwiczę 🎸” (przycisk pod paskiem postępu, działa na każdej zakładce) z bonusami za
+metronom i nastrojenie gitary.
 
 Dalej, w tej kolejności:
-1. **Licznik „Ćwiczę 🎸”** – liczy minuty tylko, gdy mikrofon słyszy grę; zapisuje zdarzenia
-   `practice` (np. co pełną minutę, żeby zamknięcie aplikacji nic nie gubiło) i `goal`
-   (`pendingGoalEvent`); nutki także za metronom i stroik. Od tego kroku postęp realnie przybywa.
 2. **Odznaki i świętowanie** – odznaki wyliczane ze zdarzeń, gablota (niezdobyte jako zagadki),
    konfetti/dźwięk przy odznace, awansie i celu.
 3. **Komponenty gryfu i pięciolinii** (własne SVG).

@@ -32,3 +32,12 @@ export function isClickSounding(ctx: AudioContext): boolean {
   const now = ctx.currentTime
   return clickTimes.some((t) => t <= now && now < t + CLICK_IGNORE_S)
 }
+
+/** Najwolniejsze tempo (40 BPM) to tyk co 1,5 s – dłuższa cisza znaczy, że metronom stoi. */
+const RUNNING_GAP_S = 2
+
+/** Czy metronom właśnie gra – do bonusu za ćwiczenie z metronomem. */
+export function isMetronomeRunning(ctx: AudioContext): boolean {
+  const last = clickTimes.at(-1)
+  return last !== undefined && ctx.currentTime - last < RUNNING_GAP_S
+}

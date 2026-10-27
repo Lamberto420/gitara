@@ -824,3 +824,24 @@ h1 {
   color: white;
   box-shadow: 0 4px 0 #a82a22;
 }
+
+.string-button {
+  position: relative;
+}
+
+/* ✅ w rogu nastrojonej struny – mała lista zadań „nastrój wszystkie”. */
+.string-tuned {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  font-size: 1.1rem;
+}
+
+.tuned-banner {
+  margin: 16px 0 8px;
+  padding: 12px;
+  border-radius: 16px;
+  background: #d5f5dd;
+  font-size: 1.3rem;
+  font-weight: 900;
+}

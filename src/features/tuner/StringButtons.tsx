@@ -4,10 +4,12 @@ interface Props {
   locked: GuitarString | null
   /** Struna rozpoznana w trybie auto – podświetlamy ją delikatnie. */
   detected: GuitarString | null
+  /** Numery strun już nastrojonych w tej sesji – dostają ✅. */
+  tuned?: ReadonlySet<number>
   onSelect(string: GuitarString | null): void
 }
 
-export default function StringButtons({ locked, detected, onSelect }: Props) {
+export default function StringButtons({ locked, detected, tuned, onSelect }: Props) {
   return (
     <div className="strings">
       <button
@@ -25,6 +27,7 @@ export default function StringButtons({ locked, detected, onSelect }: Props) {
           <button key={s.number} className={classes.join(' ')} onClick={() => onSelect(s)}>
             <span className="string-name">{s.name}</span>
             <span className="string-number">{s.number}</span>
+            {tuned?.has(s.number) && <span className="string-tuned" aria-label="nastrojona">✅</span>}
           </button>
         )
       })}
