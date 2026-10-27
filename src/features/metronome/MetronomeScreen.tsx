@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { MAX_BPM, MIN_BPM } from '../../audio/metronome/scheduler'
 import { createTapTempo } from '../../audio/metronome/tapTempo'
 import { tempoName } from '../../audio/metronome/tempo'
+import { useProfiles } from '../profiles/ProfileContext'
 import BeatDots from './BeatDots'
 import { BEATS_PER_BAR_OPTIONS, useMetronome } from './useMetronome'
 
@@ -11,7 +12,10 @@ const isIOS =
   (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
 
 export default function MetronomeScreen() {
-  const m = useMetronome()
+  const { activeProfile, updateProfile } = useProfiles()
+  const m = useMetronome(activeProfile?.metronome, (metronome) => {
+    if (activeProfile) updateProfile(activeProfile.id, { metronome })
+  })
   const tapper = useRef(createTapTempo())
   const tempo = tempoName(m.bpm)
 

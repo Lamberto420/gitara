@@ -2,42 +2,43 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { resumeAudio } from '../../audio/audioContext'
 import { playClick } from '../../audio/metronome/click'
 import { clampBpm, createScheduler, type Beat } from '../../audio/metronome/scheduler'
-import { load, save } from '../../storage'
+import type { MetronomeSettings } from '../../data/model'
 import { keepScreenOn } from './wakeLock'
 
 export const BEATS_PER_BAR_OPTIONS = [2, 3, 4] as const
 
-interface Settings {
-  bpm: number
-  beatsPerBar: number
-}
-
-const DEFAULT_SETTINGS: Settings = { bpm: 80, beatsPerBar: 4 }
+const DEFAULT_SETTINGS: MetronomeSettings = { bpm: 80, beatsPerBar: 4 }
 /** Co ile ms timer budzi harmonogram (planuje on 100 ms do przodu, więc jest zapas). */
 const TICK_MS = 25
 
-function loadSettings(): Settings {
-  const s = load('metronome', DEFAULT_SETTINGS)
+function normalize(s: MetronomeSettings | undefined): MetronomeSettings {
   return {
-    bpm: clampBpm(Number(s.bpm) || DEFAULT_SETTINGS.bpm),
-    beatsPerBar: BEATS_PER_BAR_OPTIONS.includes(s.beatsPerBar as 2 | 3 | 4) ? s.beatsPerBar : 4,
+    bpm: clampBpm(Number(s?.bpm) || DEFAULT_SETTINGS.bpm),
+    beatsPerBar: BEATS_PER_BAR_OPTIONS.includes(s?.beatsPerBar as 2 | 3 | 4) ? s!.beatsPerBar : 4,
   }
 }
 
-export function useMetronome() {
-  const [settings, setSettings] = useState(loadSettings)
+/**
+ * @param initial ustawienia zapisane w profilu
+ * @param onChange wywoływane po zmianie tempa/metrum (zapis do profilu)
+ */
+export function useMetronome(initial: MetronomeSettings | undefined, onChange: (s: MetronomeSettings) => void) {
+  const [settings, setSettings] = useState(() => normalize(initial))
   const [playing, setPlaying] = useState(false)
   /** Które uderzenie taktu właśnie słychać (do migania kropek). */
   const [currentBeat, setCurrentBeat] = useState<number | null>(null)
 
   const settingsRef = useRef(settings)
+  const onChangeRef = useRef(onChange)
+  onChangeRef.current = onChange
   const schedulerRef = useRef<ReturnType<typeof createScheduler> | null>(null)
   const stopRef = useRef<(() => void) | null>(null)
   const startingRef = useRef(false)
 
   useEffect(() => {
+    // Pomijamy pierwsze uruchomienie – nic się jeszcze nie zmieniło.
+    if (settingsRef.current !== settings) onChangeRef.current(settings)
     settingsRef.current = settings
-    save('metronome', settings)
     schedulerRef.current?.setBpm(settings.bpm)
     schedulerRef.current?.setBeatsPerBar(settings.beatsPerBar)
   }, [settings])

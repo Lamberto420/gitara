@@ -220,7 +220,7 @@ button {
 
 .strings {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 8px;
   margin-top: 16px;
 }
@@ -426,4 +426,220 @@ button {
 .hint.small {
   font-size: 1rem;
   color: #7a6a58;
+}
+
+/* --- Profile --- */
+
+h1 {
+  margin: 8px 0 16px;
+  font-size: 2rem;
+}
+
+.welcome {
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--muted);
+  font-size: 3.2rem;
+  line-height: 1;
+}
+
+.avatar.big {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  font-size: 4rem;
+}
+
+.avatar.small {
+  width: 44px;
+  height: 44px;
+  font-size: 1.6rem;
+}
+
+.profile-picker {
+  text-align: center;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.profile-card {
+  position: relative;
+  min-height: 170px;
+  border: none;
+  border-radius: 24px;
+  background: white;
+  box-shadow: 0 4px 0 var(--muted);
+  color: var(--text);
+}
+
+.profile-card.add {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: transparent;
+  border: 3px dashed var(--muted);
+  box-shadow: none;
+}
+
+.profile-select {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 8px;
+  border: none;
+  background: transparent;
+  color: inherit;
+}
+
+.profile-name {
+  font-size: 1.3rem;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.edit-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg);
+  font-size: 1.1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.profile-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 16px 4px 4px;
+  border: none;
+  border-radius: 999px;
+  background: white;
+  box-shadow: 0 2px 0 var(--muted);
+  color: var(--text);
+}
+
+.profile-chip .profile-name {
+  font-size: 1.15rem;
+}
+
+.chip-switch {
+  color: #b9a993;
+  font-weight: 800;
+}
+
+/* Edytor profilu */
+
+.profile-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: left;
+}
+
+.profile-editor h1,
+.profile-editor .hint {
+  text-align: center;
+}
+
+.field {
+  display: flex;
+  min-width: 0; /* fieldset domyślnie nie chce się zwęzić i wystaje poza ekran */
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.field legend {
+  margin-bottom: 8px;
+  padding: 0;
+}
+
+.field input {
+  min-height: 56px;
+  padding: 0 16px;
+  border: 3px solid var(--muted);
+  border-radius: 14px;
+  background: white;
+  color: var(--text);
+  font: inherit;
+  font-size: 1.4rem;
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.choice-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr)); /* minmax(0,…): emoji nie rozpychają kolumn */
+  gap: 8px;
+}
+
+.choice {
+  aspect-ratio: 1;
+  border: 3px solid transparent;
+  border-radius: 14px;
+  background: var(--muted);
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.choice.selected {
+  border-color: var(--text);
+  transform: scale(1.08);
+}
+
+.segmented {
+  display: flex;
+  gap: 8px;
+}
+
+.segmented > * {
+  flex: 1;
+}
+
+.link-button {
+  align-self: center;
+  min-height: 44px;
+  border: none;
+  background: transparent;
+  color: #7a6a58;
+  font-size: 1rem;
+  text-decoration: underline;
+}
+
+.link-button.danger {
+  color: var(--red);
 }
