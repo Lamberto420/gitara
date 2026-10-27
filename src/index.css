@@ -976,3 +976,64 @@ h1 {
   font-weight: 700;
   color: var(--accent-dark);
 }
+
+/* --- Świętowanie --- */
+
+.celebration-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(43, 33, 24, 0.55);
+}
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.celebration {
+  position: relative;
+  width: min(100%, 420px);
+  padding: 24px 20px;
+  border-radius: 28px;
+  background: var(--bg);
+  text-align: center;
+  animation: pop 0.35s ease-out;
+}
+
+.celebration h2 {
+  margin: 8px 0;
+  font-size: 1.8rem;
+}
+
+.celebration p {
+  margin: 0 0 20px;
+  font-size: 1.25rem;
+  overflow-wrap: anywhere;
+}
+
+.celebration-emoji {
+  font-size: 5rem;
+  line-height: 1.1;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .celebration {
+    animation: none;
+  }
+}

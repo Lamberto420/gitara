@@ -5,6 +5,8 @@ import { ProfileProvider, useProfiles } from './features/profiles/ProfileContext
 import ProfileChip from './features/profiles/ProfileChip'
 import ProfilePicker from './features/profiles/ProfilePicker'
 import BadgeCase from './features/badges/BadgeCase'
+import CelebrationDialog from './features/celebrations/CelebrationDialog'
+import { useCelebrations } from './features/celebrations/useCelebrations'
 import PracticeArea from './features/practice/PracticeArea'
 import { useGoalWatcher, useProgress } from './features/progress/useProgress'
 
@@ -25,6 +27,7 @@ function Shell() {
   const [badgeCaseOpen, setBadgeCaseOpen] = useState(false)
   const closeBadgeCase = useCallback(() => setBadgeCaseOpen(false), [])
   useGoalWatcher()
+  const celebrations = useCelebrations(progress, badges)
 
   return (
     <div className="app">
@@ -61,6 +64,9 @@ function Shell() {
             {tab === 'tuner' ? <TunerScreen /> : <MetronomeScreen />}
           </main>
           {badgeCaseOpen && progress && <BadgeCase badges={badges} progress={progress} onClose={closeBadgeCase} />}
+          {celebrations.current && (
+            <CelebrationDialog celebration={celebrations.current} onDone={celebrations.dismiss} />
+          )}
         </>
       )}
     </div>

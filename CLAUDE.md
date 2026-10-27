@@ -65,6 +65,11 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 - 🧊 Ochrona serii: +1 co 7 dni serii (maks. 2), zużywa się automatycznie przy opuszczonym dniu.
 - Rodzinna seria (współpraca, bez rankingów): dni, w których każda osoba spełniła cel
   (dzień uratowany ochroną też się liczy).
+- 🏅 Odznaki (`progress/badges.ts`): wyliczane ze zdarzeń z dniem zdobycia, nigdy nie przepadają
+  (seria = najdłuższa w historii). Nowa odznaka = nowa reguła w `RULES` (+ test); id odznak są stałe.
+- Świętowanie (`progress/celebrations.ts`): cel, awans, odznaka – tylko gdy przybyły w trakcie
+  używania aplikacji (nie przy starcie, zmianie osoby, nowym dniu ani imporcie kopii).
+  Konfetti własne (canvas, wyłączone przy „ogranicz animacje”), fanfara tylko po geście użytkownika.
 
 ## Konwencje
 - Teksty w UI po polsku i **neutralne płciowo** (profil może należeć do każdego, np. „tej osoby”, „wszyscy”).
@@ -93,11 +98,9 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 Zrobione: stroik (auto + blokada struny + dźwięk wzorcowy), metronom (tempo, metrum, tap tempo,
 Wake Lock), PWA, publikacja, profile z kopią zapasową, silnik postępu z nagłówkiem (seria, nutki, cel),
 licznik „Ćwiczę 🎸” (przycisk pod paskiem postępu, działa na każdej zakładce) z bonusami za
-metronom i nastrojenie gitary.
+metronom i nastrojenie gitary, 16–17 odznak z gablotą (🏅 w nagłówku) i świętowaniem.
 
 Dalej, w tej kolejności:
-2. **Odznaki i świętowanie** – odznaki wyliczane ze zdarzeń, gablota (niezdobyte jako zagadki),
-   konfetti/dźwięk przy odznace, awansie i celu.
 3. **Komponenty gryfu i pięciolinii** (własne SVG).
 4. **Gra „Zagraj nutę”** (I pozycja, sprawdzanie mikrofonem), potem edytor ćwiczeń dla taty.
 5. Później: trener tempa w metronomie; automatyczna synchronizacja przez Firebase, jeśli ręczne

@@ -31,6 +31,8 @@ interface ProfilesApi {
   importData(incoming: AppData): MergeSummary
   /** Dopisuje zdarzenia postępu (zdarzenia o istniejącym id są pomijane). */
   addEvents(events: ActivityEvent[]): void
+  /** Rośnie przy każdym imporcie kopii – nagrody „z importu” nie są świętowane. */
+  importCount: number
 }
 
 const ProfileContext = createContext<ProfilesApi | null>(null)
@@ -39,6 +41,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState(loadAppData)
   const [activeId, setActiveId] = useState(loadActiveProfileId)
   const [saveFailed, setSaveFailed] = useState(false)
+  const [importCount, setImportCount] = useState(0)
 
   // Każda zmiana danych od razu trafia do pamięci urządzenia.
   useEffect(() => setSaveFailed(!saveAppData(data)), [data])
@@ -83,6 +86,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     (incoming: AppData) => {
       const merged = mergeAppData(data, incoming)
       setData(merged)
+      setImportCount((n) => n + 1)
       return mergeSummary(data, merged)
     },
     [data],
@@ -99,6 +103,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     deleteProfile,
     importData,
     addEvents,
+    importCount,
   }
   return <ProfileContext.Provider value={api}>{children}</ProfileContext.Provider>
 }
