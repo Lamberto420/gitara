@@ -7,7 +7,7 @@ import { createMedianFilter } from '../../audio/pitch/median'
 import { detectPitch, rms } from '../../audio/pitch/yin'
 import { isReferenceTonePlaying } from '../../audio/referenceTone'
 import { createNoteListener } from '../../game/noteListener'
-import { currentNote, hit, isFinished, miss, newRound, roundXp, type LevelId, type Round } from '../../game/round'
+import { currentNote, hint, hit, isFinished, miss, newRound, roundXp, type LevelId, type Round } from '../../game/round'
 import { noteGameEvent } from '../../progress/events'
 import { usePracticeSession } from '../practice/PracticeContext'
 import { useProfiles } from '../profiles/ProfileContext'
@@ -20,7 +20,7 @@ const REVEAL_MS = 900
 export type GamePhase =
   | { name: 'menu' }
   | { name: 'starting'; level: LevelId }
-  | { name: 'playing'; round: Round; revealed: boolean; wrong: number | null }
+  | { name: 'playing'; round: Round; revealed: boolean; wrong: number | null; hinted: boolean }
   | { name: 'done'; round: Round; xp: number }
   | { name: 'error'; message: string }
 
@@ -34,6 +34,8 @@ export function useNoteGame() {
   const practice = usePracticeSession()
   const [phase, setPhase] = useState<GamePhase>({ name: 'menu' })
   const stopRef = useRef<(() => void) | null>(null)
+  /** Pokazanie podpowiedzi w trwającej rundzie (runda żyje w pętli mikrofonu, nie w stanie Reacta). */
+  const hintRef = useRef<(() => void) | null>(null)
   const aliveRef = useRef(true)
 
   const stop = useCallback(() => {
@@ -64,11 +66,12 @@ export function useNoteGame() {
       let listener = createNoteListener(currentNote(round)!.midi)
       let revealUntil = 0
       let wrong: number | null = null
+      let hinted = false
       const buffer = new Float32Array(mic.analyser.fftSize)
       const median = createMedianFilter(5)
       let frame = 0
       let raf = 0
-      const show = (revealed: boolean) => setPhase({ name: 'playing', round, revealed, wrong })
+      const show = (revealed: boolean) => setPhase({ name: 'playing', round, revealed, wrong, hinted })
 
       const loop = () => {
         raf = requestAnimationFrame(loop)
@@ -81,6 +84,7 @@ export function useNoteGame() {
           if (isFinished(round)) return finish()
           listener = createNoteListener(currentNote(round)!.midi, prev)
           median.reset()
+          hinted = false
           show(false)
         }
         if (frame++ % 2) return
@@ -111,9 +115,16 @@ export function useNoteGame() {
         setPhase({ name: 'done', round, xp })
       }
 
+      hintRef.current = () => {
+        if (revealUntil || hinted) return
+        round = hint(round)
+        hinted = true
+        show(false)
+      }
       stopRef.current = () => {
         cancelAnimationFrame(raf)
         mic.stop()
+        hintRef.current = null
       }
       show(false)
       loop()
@@ -136,5 +147,7 @@ export function useNoteGame() {
     }
   }, [stop])
 
-  return { phase, start, quit }
+  const showHint = useCallback(() => hintRef.current?.(), [])
+
+  return { phase, start, quit, showHint }
 }

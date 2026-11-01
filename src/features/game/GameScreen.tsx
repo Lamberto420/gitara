@@ -15,7 +15,7 @@ const LEVEL_INFO: Record<LevelId, { emoji: string; text: string }> = {
 
 /** Gra „Zagraj nutę”: nuta na pięciolinii, a mikrofon sprawdza, czy zabrzmiała. */
 export default function GameScreen() {
-  const { phase, start, quit } = useNoteGame()
+  const { phase, start, quit, showHint } = useNoteGame()
 
   if (phase.name === 'menu' || phase.name === 'error' || phase.name === 'starting') {
     return (
@@ -56,11 +56,12 @@ export default function GameScreen() {
     )
   }
 
-  const { round, revealed, wrong } = phase
+  const { round, revealed, wrong, hinted } = phase
   // Po trafieniu runda jest już przy następnej nucie, a na ekranie zostaje trafiona – na chwilę.
   const note = revealed ? round.notes[round.index - 1] : currentNote(round)!
   const level = LEVELS[round.level]
-  const showName = level.showFretboard || revealed
+  const showName = level.showFretboard || revealed || hinted
+  const showFretboard = showName
   const color = STRING_COLORS[note.string]
   const listen = async () => playReferenceTone(await resumeAudio(), midiToFreq(note.midi))
 
@@ -71,11 +72,25 @@ export default function GameScreen() {
         {revealed ? `✅ ${note.name}` : showName ? note.name : '?'}
       </div>
       <p className="game-hint" aria-live="polite">
-        {revealed ? 'Brawo!' : wrong !== null ? `Słyszę ${noteName(wrong).name} – spróbuj jeszcze raz` : '🎤 Zagraj tę nutę'}
+        {revealed
+          ? 'Brawo!'
+          : wrong !== null
+            ? `Słyszę ${noteName(wrong).name} – spróbuj jeszcze raz`
+            : hinted
+              ? '💡 Tu jest ta nuta – zagraj ją'
+              : '🎤 Zagraj tę nutę'}
       </p>
       <Staff midi={note.midi} color={showName ? color : 'currentColor'} label="Nuta do zagrania" />
-      {(level.showFretboard || revealed) && <Fretboard note={note} />}
-      {!level.showFretboard && !revealed && <p className="game-where">Gdzie jest ta nuta na gryfie?</p>}
+      {showFretboard && <Fretboard note={note} />}
+      {!showFretboard && (
+        <>
+          <p className="game-where">Gdzie jest ta nuta na gryfie?</p>
+          {/* Podpowiedź pokazuje gryf, ale ta nuta nie da już nutki za trafienie. */}
+          <button className="notes-button game-hint-button" onClick={showHint}>
+            💡 Podpowiedź <span className="game-hint-cost">(bez ⭐ za tę nutę)</span>
+          </button>
+        </>
+      )}
       <div className="notes-controls">
         <button className="notes-button" onClick={listen}>
           🔊 Posłuchaj
@@ -84,7 +99,7 @@ export default function GameScreen() {
           ⏹ Zakończ
         </button>
       </div>
-      {revealed && <WhereText note={note} />}
+      {(revealed || (hinted && !level.showFretboard)) && <WhereText note={note} />}
     </section>
   )
 }

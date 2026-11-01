@@ -51,7 +51,10 @@ export default function Staff({ midi, color = 'currentColor', label }: Props) {
   const up = position !== null && stemUp(position)
 
   return (
-    <svg className="staff" viewBox="0 30 200 115" role="img" aria-label={label ?? 'Pięciolinia'}>
+    <svg className="staff" viewBox="-6 24 212 127" role="img" aria-label={label ?? 'Pięciolinia'}>
+      {/* Białe tło (z marginesem) w samym rysunku, nie w CSS – przeglądarka z narzuconym ciemnym
+          motywem przyciemnia tło z CSS, a wypełnienia w SVG zostawia jak na kartce papieru. */}
+      <rect x="-6" y="24" width="212" height="127" rx="14" fill="white" />
       <g stroke="currentColor" strokeWidth="1.2">
         {[0, 2, 4, 6, 8].map((p) => (
           <line key={p} x1="4" x2="196" y1={y(p)} y2={y(p)} />

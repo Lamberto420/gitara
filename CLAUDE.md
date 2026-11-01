@@ -62,7 +62,8 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 - ⭐ Nutki: 2 za minutę grania (3, gdy gra metronom ≥ pół minuty), 10 za spełniony cel dzienny,
   3 raz dziennie za nastrojenie wszystkich 6 strun (`tuned:<profileId>:<dzień>`).
   Gra „Zagraj nutę” (zdarzenie `note-game`, runda 10 nut): Łatwy (bez krzyżyków, gryf widoczny) +2 za rundę;
-  Trudny (24 nuty, bez gryfu) +1 za nutę trafioną za pierwszym razem i +2 za rundę.
+  Trudny (24 nuty, bez gryfu) +1 za nutę trafioną za pierwszym razem i +2 za rundę; „💡 Podpowiedź”
+  pokazuje gryf, ale ta nuta nie liczy się już za pierwszym razem (jak pomyłka).
   Nie dajemy nutek za samo włączenie narzędzia – tylko za granie/strojenie.
 - Poziomy: próg poziomu n = 25·n·(n−1) (0, 50, 150, 300, 500…), nazwy w `progress/levels.ts`.
 - Cel dzienny: minuty grania (10/15/20 w profilu), liczone przez mikrofon – tylko gdy słychać gitarę
@@ -83,6 +84,8 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 - Teksty w UI po polsku i **neutralne płciowo** (profil może należeć do każdego, np. „tej osoby”, „wszyscy”).
 - Struna 2 nazywa się **H** (polska notacja). Półtony zapisujemy krzyżykami (F♯, C♯…), a czytamy
   po polsku: fis, cis, gis, dis, ais (`music/firstPosition.ts`). Po polsku **B = B♭**, więc A♯ to „ais”, nigdy „B”.
+- Wygląd tylko jasny (`color-scheme: only light`). Białe tła rysunków (pięciolinia) dajemy w samym SVG,
+  nie w CSS – narzucony przez przeglądarkę ciemny motyw przyciemnia tła z CSS.
 - Kolor nuty = kolor struny (`features/notation/stringColors.ts`) – ten sam na pięciolinii, gryfie i w nazwie.
 - Gryf rysujemy poziomo, struna 1 na górze (jak w tabulaturze); pusta struna = kółko „0” przed siodełkiem.
 - Duże elementy dotykowe (≥ 48 px). W siatkach CSS używaj `minmax(0, 1fr)`, a fieldset potrzebuje

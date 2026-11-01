@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { FIRST_POSITION, FIRST_POSITION_NATURALS } from '../music/firstPosition'
-import { LEVELS, ROUND_LENGTH, currentNote, hit, isFinished, miss, newRound, pickNotes, roundXp } from './round'
+import { LEVELS, ROUND_LENGTH, currentNote, hint, hit, isFinished, miss, newRound, pickNotes, roundXp } from './round'
 
 /** Prosty powtarzalny generator liczb losowych (do testów). */
 function seeded(seed: number): () => number {
@@ -57,6 +57,16 @@ describe('przebieg rundy', () => {
     expect(r.missed).toBe(false)
     r = hit(r)
     expect(r).toMatchObject({ index: 2, firstTry: 1, results: [false, true] })
+  })
+})
+
+describe('podpowiedź', () => {
+  it('nuta z podpowiedzią nie liczy się za pierwszym razem – mniej nutek na trudnym', () => {
+    let r = newRound('hard', seeded(5))
+    r = hit(hint(r))
+    r = hit(r)
+    expect(r).toMatchObject({ index: 2, firstTry: 1, results: [false, true] })
+    expect(roundXp('hard', r.firstTry)).toBe(3)
   })
 })
 

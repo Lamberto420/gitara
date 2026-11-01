@@ -7,6 +7,9 @@
   --green: #2fbf55;
   --yellow: #f5c400;
   --red: #ef4136;
+  /* Aplikacja ma tylko jasny wygląd – „only” zabrania przeglądarce (np. Chrome na Androidzie
+     w trybie ciemnym) samodzielnego przyciemniania strony, które robiło czarną pięciolinię. */
+  color-scheme: only light;
   font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
   color: var(--text);
   background: var(--bg);
@@ -1087,10 +1090,9 @@ h1 {
   color: var(--text);
 }
 
+/* Tło i margines są w samym SVG (patrz Staff.tsx) – tu tylko cień i zaokrąglenie dla niego. */
 .staff {
-  padding: 8px;
   border-radius: 20px;
-  background: white;
   box-shadow: 0 3px 0 var(--muted);
 }
 
@@ -1200,6 +1202,17 @@ h1 {
 
 .game .notes-controls {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.game-hint-button {
+  width: 100%;
+  background: #fff3c4;
+}
+
+.game-hint-cost {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .game-done-emoji {

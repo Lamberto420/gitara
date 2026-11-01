@@ -47,7 +47,7 @@ export interface Round {
   firstTry: number
   /** Dla każdej trafionej już nuty: czy za pierwszym razem (kropki postępu na ekranie). */
   results: readonly boolean[]
-  /** Czy przy bieżącej nucie była już pomyłka. */
+  /** Czy przy bieżącej nucie była pomyłka albo podpowiedź – wtedy nie liczy się „za pierwszym razem”. */
   missed: boolean
 }
 
@@ -68,6 +68,11 @@ export function hit(r: Round): Round {
 /** Zagrana inna nuta – bez kary, tylko ta nuta nie liczy się już „za pierwszym razem”. */
 export function miss(r: Round): Round {
   return isFinished(r) ? r : { ...r, missed: true }
+}
+
+/** Podpowiedź (gryf na trudnym poziomie) – nuta da się zagrać, ale bez nutki za trafienie. */
+export function hint(r: Round): Round {
+  return miss(r)
 }
 
 /** Nutki za ukończoną rundę. */
