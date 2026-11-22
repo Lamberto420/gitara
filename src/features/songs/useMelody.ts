@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { resumeAudio } from '../../audio/audioContext'
 import { midiToFreq } from '../../audio/pitch/notes'
-import { playReferenceTone } from '../../audio/referenceTone'
+import { playPluck } from '../../audio/referenceTone'
 import { melodySchedule } from '../../music/melody'
 import { phraseNotes, type Song } from '../../music/song'
 
@@ -36,10 +36,11 @@ export function useMelody() {
       const where: MelodyPosition[] = phrases.flatMap((p) => phraseNotes(song.phrases[p]).map((_, note) => ({ phrase: p, note })))
       const schedule = melodySchedule(items, song.bpm)
       const t0 = ctx.currentTime + LEAD_S
-      const silencers = schedule.map((n) => playReferenceTone(ctx, midiToFreq(n.midi), t0 + n.start, n.duration))
+      const silencers = schedule.map((n) => playPluck(ctx, midiToFreq(n.midi), t0 + n.start, n.duration))
       const timers = schedule.map((n) => window.setTimeout(() => setPosition(where[n.index]), (LEAD_S + n.start) * 1000))
+      // Koniec podświetlania po ostatniej nucie (jej wybrzmiewanie nie musi trzymać przycisku „Zatrzymaj”).
       const last = schedule[schedule.length - 1]
-      timers.push(window.setTimeout(() => stop(), (LEAD_S + last.start + last.duration) * 1000 + 200))
+      timers.push(window.setTimeout(() => setPosition(null), (LEAD_S + last.start + 1) * 1000))
       stopRef.current = () => {
         timers.forEach((t) => window.clearTimeout(t))
         silencers.forEach((s) => s())

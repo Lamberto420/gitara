@@ -1,19 +1,24 @@
-// Plan odegrania frazy („Posłuchaj”): kiedy i jak długo brzmi każda nuta. Czysta logika –
-// dźwięk robi audio/referenceTone.
+// Plan odegrania frazy („Posłuchaj”): kiedy zaczyna się każda nuta i jak długo brzmi.
+// Jak na gitarze: struna wybrzmiewa, dopóki na TEJ SAMEJ strunie nie zagra następna nuta
+// (palec albo nowe szarpnięcie ją tłumi) – nuta na innej strunie nie przerywa poprzedniej.
+// Czysta logika – dźwięk robi audio/referenceTone.
 import { sixteenths, type SongItem } from './song'
 
 export interface ScheduledNote {
   /** Wysokość brzmienia (MIDI) – gitara brzmi oktawę niżej niż zapis. */
   midi: number
-  /** Początek i długość w sekundach od startu melodii. */
+  string: number
+  /** Początek i czas brzmienia w sekundach od startu melodii. */
   start: number
   duration: number
   /** Numer nuty we fragmencie (bez pauz) – do podświetlania. */
   index: number
 }
 
-/** Krótka przerwa przed następną nutą, żeby powtórzone dźwięki („A A A A”) było słychać osobno. */
-const GAP = 0.9
+/** Tyle wybrzmiewa nuta, której nic nie tłumi (ostatnia, przed pauzą…). */
+export const RING_S = 2.5
+/** Struna milknie chwilę przed nowym szarpnięciem – powtórzone dźwięki („A A A A”) słychać osobno. */
+const RESTRIKE_GAP_S = 0.03
 
 /** `bpm` – ćwierćnuty na minutę (jak w piosence). Pauzy tylko przesuwają czas. */
 export function melodySchedule(items: readonly SongItem[], bpm: number): ScheduledNote[] {
@@ -22,9 +27,15 @@ export function melodySchedule(items: readonly SongItem[], bpm: number): Schedul
   let t = 0
   for (const item of items) {
     if (item.kind === 'bar') continue
-    const length = sixteenths(item.value, item.dotted) * sixteenth
-    if (item.kind === 'note') out.push({ midi: item.note.midi, start: t, duration: length * GAP, index: out.length })
-    t += length
+    if (item.kind === 'note') {
+      out.push({ midi: item.note.midi, string: item.note.string, start: t, duration: RING_S, index: out.length })
+    }
+    t += sixteenths(item.value, item.dotted) * sixteenth
+  }
+  // Następna nuta na tej samej strunie tłumi poprzednią.
+  for (let i = 0; i < out.length; i++) {
+    const next = out.slice(i + 1).find((n) => n.string === out[i].string)
+    if (next) out[i].duration = Math.min(RING_S, next.start - out[i].start - RESTRIKE_GAP_S)
   }
   return out
 }
