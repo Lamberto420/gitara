@@ -10,8 +10,8 @@ Każdą nową funkcję podłączaj do systemu nutek/odznak.
 Syn uczy się z nauczycielem z książki „Gitara Pierwsza Klasa” (T. Stachak), jest na Części 3,
 czyta nuty z pięciolinii, zna całą I pozycję (wszystkie struny do 3. progu). W ćwiczeniach
 pokazujemy pięciolinię **i** gryf z miejscem przyciśnięcia (numer palca 1–4).
-Nie odtwarzamy ćwiczeń/melodii z książki (prawa autorskie) – gry generujemy z zakresu znanych
-nut, a zadania domowe tata wpisze w (przyszłym) edytorze ćwiczeń.
+Nie odtwarzamy ćwiczeń/melodii z książki ani popularnych piosenek (prawa autorskie, ADR 0001) – gry generujemy z zakresu znanych
+nut, wbudowane piosenki są z domeny publicznej, a resztę rodzina doda jako własne piosenki.
 
 Publikacja: https://lamberto420.github.io/gitara/ (repo publiczne: github.com/Lamberto420/gitara).
 
@@ -111,7 +111,7 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
   Ciszę do testów: `ffmpeg -f lavfi -i anullsrc`; kilka tonów po kolei: `concat` kilku `sine`.
 - Układ sprawdzaj pomiarem (brak poziomego przewijania) przy szerokościach 320, 390 i 768 px.
 
-## Plan (stan na 2026-10-27)
+## Plan (stan na 2026-11-22)
 Zrobione: stroik (auto + blokada struny + dźwięk wzorcowy), metronom (tempo, metrum, tap tempo,
 Wake Lock), PWA, publikacja, profile z kopią zapasową, silnik postępu z nagłówkiem (seria, nutki, cel),
 licznik „Ćwiczę 🎸” (przycisk pod paskiem postępu, działa na każdej zakładce) z bonusami za
@@ -122,12 +122,23 @@ zestaw 17 nut bez krzyżyków (poziom Łatwy gry).
 Gra „🎯 Zagraj nutę” (zakładka Gra): runda 10 nut, Łatwy/Trudny, sprawdzanie mikrofonem, sama włącza
 „Ćwiczę”, odznaki 🎯 🎮 💯 🎓.
 
-Dalej, w tej kolejności:
-4. **Edytor ćwiczeń dla taty** (zadania domowe), np. jako własne rundy gry.
+Dalej, w tej kolejności (ustalone 2026-11-22; pojęcia w `GLOSSARY.md`, prawa autorskie: ADR 0001):
+1. **Ścieżka z piosenkami wbudowanymi** (tylko domena publiczna, ~10 łatwych: „Wlazł kotek”,
+   „Panie Janie”, kolędy…): zapis z rytmem na pięciolinii, tekst pod nutami (wyłączany), frazy bez
+   blokad, korony 👑 1 (do końca, gryf widoczny) i 2 (bez gryfu, ≥ 90% za pierwszym razem).
+   Następna piosenka po 1 koronie albo ręczne odblokowanie. Piosenka sama włącza „Ćwiczę”.
+   Nutki: fraza +1, cała piosenka +3, nowa korona +5 (raz). Korony wyliczane ze zdarzeń.
+   Odznaki: 🎵 pierwsza piosenka, 👑 trzy korony, 🗺️ koniec ścieżki, 📻 własna piosenka, kolekcjoner koron 10/25.
+2. **Korona 3: rytm z metronomem** w tempie piosenki (wolniej = nutki bez korony).
+   Najpierw wyrzucany prototyp: czy mikrofon trafia w rytm; jeśli nie – korona 3 za tempo całości.
+3. **Import MusicXML** do półki „Nasze piosenki” (własne piosenki, bez kłódek, tylko w danych
+   rodziny): linia melodii, automatyczna transpozycja do I pozycji (najmniej krzyżyków), oktawa
+   dla wystających nut, lista zmian. Własna piosenka = rekord z id, `updatedAt`, nagrobkiem.
+4. **Ręczny edytor** własnych piosenek (poprawki po imporcie, ćwiczenia z książki – dawne „zadania domowe”).
 5. Przegląd całej punktacji ⭐ (czy nie dajemy za dużo / za mało za poszczególne ćwiczenia).
-6. Później: trener tempa w metronomie; automatyczna synchronizacja przez Firebase, jeśli ręczne
-   kopie okażą się uciążliwe (wymaga zmiany zasady „brak backendu”, reguł dostępu tylko dla
-   kont rodziny i sprawdzenia aktualnych limitów darmowego planu).
+6. Później: akordy i bicie (tor m.in. dla taty), trener tempa w metronomie; automatyczna
+   synchronizacja przez Firebase, jeśli ręczne kopie okażą się uciążliwe (wymaga zmiany zasady
+   „brak backendu”, reguł dostępu tylko dla kont rodziny i sprawdzenia limitów darmowego planu).
 
 ## Zasady pracy
 - Małe, działające kroki; po każdym kroku commit
