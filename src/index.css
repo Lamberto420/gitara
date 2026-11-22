@@ -42,11 +42,11 @@ button {
 
 .tabs {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
 }
 
-/* Ikona nad napisem – przy czterech zakładkach na 320 px „Metronom” nie mieści się obok emoji. */
+/* Ikona nad napisem – przy pięciu zakładkach na 320 px „Metronom” nie mieści się obok emoji. */
 .tab {
   min-height: 72px;
   display: flex;
@@ -54,8 +54,8 @@ button {
   align-items: center;
   justify-content: center;
   gap: 2px;
-  padding: 6px 2px;
-  font-size: clamp(0.8rem, 3.6vw, 1.2rem);
+  padding: 6px 1px;
+  font-size: clamp(0.7rem, 3.4vw, 1.2rem);
   font-weight: 700;
   border: none;
   border-radius: 16px;
@@ -1243,4 +1243,227 @@ h1 {
 
 .game-back {
   width: 100%;
+}
+
+/* --- Piosenki (ścieżka, ekran piosenki, granie) --- */
+
+.songs,
+.song {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.song-path {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.song-step-button {
+  width: 100%;
+  min-height: 72px;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 18px;
+  background: var(--muted);
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-align: left;
+}
+
+button.song-step-button {
+  box-shadow: 0 4px 0 #dcc6a8;
+}
+
+.song-step.locked .song-step-button {
+  opacity: 0.75;
+}
+
+.song-step-number {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: white;
+  font-size: 1.3rem;
+}
+
+.song-step-title {
+  overflow-wrap: anywhere;
+}
+
+.song-unlock {
+  min-height: 48px;
+  padding: 0 12px;
+  font-size: 1rem;
+  background: white;
+}
+
+.crowns {
+  display: inline-flex;
+  justify-content: center;
+  gap: 2px;
+  font-size: 1.5rem;
+}
+
+.crown.empty {
+  filter: grayscale(1);
+  opacity: 0.3;
+}
+
+.song-back {
+  align-self: flex-start;
+  min-height: 48px;
+  padding: 0 16px;
+  font-size: 1.05rem;
+}
+
+.song-origin,
+.song-tip {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+.song-tip {
+  opacity: 1;
+  font-size: 1.1rem;
+}
+
+.song-modes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.song-mode {
+  min-height: 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 6px;
+  border-radius: 16px;
+  background: var(--muted);
+  cursor: pointer;
+}
+
+.song-mode input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.song-mode.active {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 0 var(--accent-dark);
+}
+
+.song-mode:has(input:focus-visible) {
+  outline: 3px solid var(--accent-dark);
+}
+
+.song-mode-label {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.song-mode-text {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.song .notes-controls {
+  /* Bez przełącznika tekstu „Posłuchaj” zajmuje całą szerokość. */
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+}
+
+.song .notes-button {
+  font-size: 1.1rem;
+}
+
+.song-lyrics-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.song-lyrics-toggle input {
+  width: 24px;
+  height: 24px;
+  accent-color: var(--accent);
+}
+
+.song-phrases {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.song-phrase {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.song-phrase-title {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.song-phrase .song-staff,
+.game .song-staff {
+  margin: 0 auto;
+  width: 100%;
+}
+
+.song-playing-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.song-progress {
+  height: 14px;
+  border-radius: 7px;
+  background: var(--muted);
+  overflow: hidden;
+}
+
+.song-progress-bar {
+  height: 100%;
+  background: var(--green);
+  transition: width 0.2s;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

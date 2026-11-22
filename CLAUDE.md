@@ -30,9 +30,11 @@ src/audio/      czysta logika dźwięku: pitch/ (YIN, nuty, mediana), metronome/
 src/data/       model danych, łączenie (merge), migracje, zapis, kopia zapasowa
 src/progress/   silnik postępu: nutki, poziomy, seria, ochrona, rodzinna seria, odznaki (czyste funkcje)
 src/music/      nuty I pozycji (struna/próg/palec) i miejsce na pięciolinii (czyste funkcje)
-src/game/       gra „Zagraj nutę”: rozpoznawanie nuty (noteListener), runda, poziomy i nutki (czyste funkcje)
+src/game/       gry: rozpoznawanie nuty (noteListener, powtórzona nuta = nowe szarpnięcie), runda „Zagraj nutę”,
+                przebieg piosenki i korony (songRun) – czyste funkcje
 src/features/   ekrany i hooki React: tuner/, metronome/, profiles/, progress/, practice/, badges/,
-                celebrations/, game/, notation/ (<Staff>, <Fretboard> – własne SVG, kolor nuty = kolor struny)
+                celebrations/, game/ (pitchLoop – wspólna pętla mikrofonu gier), songs/ (ścieżka, piosenka, „Posłuchaj”),
+                notation/ (<Staff>, <SongStaff>, <Fretboard> – własne SVG, kolor nuty = kolor struny)
 src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca false przy błędzie)
 ```
 - **Logika = czysty TypeScript z testami**; komponenty React tylko ją wywołują i wyświetlają.

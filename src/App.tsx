@@ -3,6 +3,7 @@ import TunerScreen from './features/tuner/TunerScreen'
 import MetronomeScreen from './features/metronome/MetronomeScreen'
 import NotesScreen from './features/notation/NotesScreen'
 import GameScreen from './features/game/GameScreen'
+import SongsScreen from './features/songs/SongsScreen'
 import { ProfileProvider, useProfiles } from './features/profiles/ProfileContext'
 import ProfileChip from './features/profiles/ProfileChip'
 import ProfilePicker from './features/profiles/ProfilePicker'
@@ -13,7 +14,7 @@ import PracticeArea from './features/practice/PracticeArea'
 import { PracticeProvider } from './features/practice/PracticeContext'
 import { useGoalWatcher, useProgress } from './features/progress/useProgress'
 
-type Tab = 'tuner' | 'metronome' | 'notes' | 'game'
+type Tab = 'tuner' | 'metronome' | 'notes' | 'game' | 'songs'
 
 export default function App() {
   return (
@@ -69,6 +70,10 @@ function Shell() {
               <span className="tab-icon">🎯</span>
               Gra
             </button>
+            <button className={tab === 'songs' ? 'tab active' : 'tab'} onClick={() => setTab('songs')}>
+              <span className="tab-icon">🎵</span>
+              Piosenki
+            </button>
           </nav>
           <main className="screen">
             {tab === 'tuner' ? (
@@ -77,8 +82,10 @@ function Shell() {
               <MetronomeScreen />
             ) : tab === 'notes' ? (
               <NotesScreen />
-            ) : (
+            ) : tab === 'game' ? (
               <GameScreen />
+            ) : (
+              <SongsScreen />
             )}
           </main>
           {badgeCaseOpen && progress && <BadgeCase badges={badges} progress={progress} onClose={closeBadgeCase} />}

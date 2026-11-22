@@ -1,19 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { resumeAudio } from '../../audio/audioContext'
-import { isChimePlaying, playChime } from '../../audio/chime'
-import { isClickSounding } from '../../audio/metronome/click'
-import { microphoneErrorMessage, openMicrophone } from '../../audio/microphone'
-import { createMedianFilter } from '../../audio/pitch/median'
-import { detectPitch, rms } from '../../audio/pitch/yin'
-import { isReferenceTonePlaying } from '../../audio/referenceTone'
+import { playChime } from '../../audio/chime'
+import { microphoneErrorMessage } from '../../audio/microphone'
 import { createNoteListener } from '../../game/noteListener'
 import { currentNote, hint, hit, isFinished, miss, newRound, roundXp, type LevelId, type Round } from '../../game/round'
 import { noteGameEvent } from '../../progress/events'
 import { usePracticeSession } from '../practice/PracticeContext'
 import { useProfiles } from '../profiles/ProfileContext'
+import { startPitchLoop, type PitchLoop } from './pitchLoop'
 
-/** Ta sama granica ciszy co w stroiku. */
-const SILENCE_RMS = 0.01
 /** Tyle trwa „brawo” po trafieniu (zielona nuta, gryf na trudnym), zanim pojawi się następna. */
 const REVEAL_MS = 900
 
@@ -51,52 +45,36 @@ export function useNoteGame() {
       setPhase({ name: 'starting', level })
       if (practice.status === 'idle' || practice.status === 'error') void practice.start()
 
-      let ctx: AudioContext
-      let mic: Awaited<ReturnType<typeof openMicrophone>>
-      try {
-        ctx = await resumeAudio()
-        mic = await openMicrophone(ctx)
-        if (!aliveRef.current) return mic.stop()
-      } catch (e) {
-        setPhase({ name: 'error', message: microphoneErrorMessage(e) })
-        return
-      }
-
       let round = newRound(level)
       let listener = createNoteListener(currentNote(round)!.midi)
       let revealUntil = 0
       let wrong: number | null = null
       let hinted = false
-      const buffer = new Float32Array(mic.analyser.fftSize)
-      const median = createMedianFilter(5)
-      let frame = 0
-      let raf = 0
+      let pitch: PitchLoop | null = null
       const show = (revealed: boolean) => setPhase({ name: 'playing', round, revealed, wrong, hinted })
 
-      const loop = () => {
-        raf = requestAnimationFrame(loop)
-        const now = performance.now()
-        if (revealUntil) {
-          if (now < revealUntil) return
-          // Koniec „brawo” – następna nuta. Poprzednia może jeszcze brzmieć: ignore.
-          const prev = round.notes[round.index - 1].midi
-          revealUntil = 0
-          if (isFinished(round)) return finish()
-          listener = createNoteListener(currentNote(round)!.midi, prev)
-          median.reset()
-          hinted = false
-          show(false)
+      /** Pauza na „brawo” po trafieniu – mikrofon wtedy nie słucha. */
+      const onFrame = (now: number) => {
+        if (!revealUntil) return false
+        if (now < revealUntil) return true
+        // Koniec „brawo” – następna nuta. Poprzednia może jeszcze brzmieć: ignore.
+        const prev = round.notes[round.index - 1].midi
+        revealUntil = 0
+        if (isFinished(round)) {
+          finish()
+          return true
         }
-        if (frame++ % 2) return
-        // Własne dźwięki aplikacji to nie gra na gitarze.
-        if (isReferenceTonePlaying(ctx) || isClickSounding(ctx) || isChimePlaying(ctx)) return
+        listener = createNoteListener(currentNote(round)!.midi, prev)
+        pitch?.resetFilter()
+        hinted = false
+        show(false)
+        return false
+      }
 
-        mic.analyser.getFloatTimeDomainData(buffer)
-        const raw = rms(buffer) >= SILENCE_RMS ? detectPitch(buffer, ctx.sampleRate) : null
-        if (raw === null) median.reset()
-        const heard = listener.update(now, raw === null ? null : median.push(raw))
+      const onReading = (now: number, freq: number | null) => {
+        const heard = listener.update(now, freq)
         if (heard?.kind === 'hit') {
-          playChime(ctx)
+          if (pitch) playChime(pitch.ctx)
           round = hit(round)
           wrong = null
           revealUntil = now + REVEAL_MS
@@ -121,13 +99,19 @@ export function useNoteGame() {
         hinted = true
         show(false)
       }
+      try {
+        pitch = await startPitchLoop(onReading, onFrame)
+        if (!aliveRef.current) return pitch.stop()
+      } catch (e) {
+        setPhase({ name: 'error', message: microphoneErrorMessage(e) })
+        return
+      }
+      const loop = pitch
       stopRef.current = () => {
-        cancelAnimationFrame(raf)
-        mic.stop()
+        loop.stop()
         hintRef.current = null
       }
       show(false)
-      loop()
     },
     [activeProfile, addEvents, practice, stop],
   )
