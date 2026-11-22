@@ -13,6 +13,7 @@ import {
   runMiss,
   runNote,
   runPosition,
+  runResult,
   runXp,
   type SongRun,
 } from './songRun'
@@ -106,5 +107,12 @@ describe('wynik', () => {
     const run = play(newSongRun(mary, 'staff', 'song'))
     const ten = { ...run, notes: run.notes.slice(0, 10), results: [...Array(9).fill(true), false], index: 10 }
     expect(runCrown(ten)).toBe(2)
+  })
+})
+
+describe('runResult', () => {
+  it('wynik do zdarzenia: liczby z przebiegu', () => {
+    const r = play(newSongRun(mary, 'staff', 'song'), new Set([3]))
+    expect(runResult(r)).toEqual({ songId: 'mary-lamb', scope: 'song', mode: 'staff', notes: 26, firstTry: 25, crown: 2, xp: SONG_XP })
   })
 })

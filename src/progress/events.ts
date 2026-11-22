@@ -97,3 +97,87 @@ export function noteGameEvent(
 ): NoteGameEvent {
   return { id: crypto.randomUUID(), profileId, at: now.getTime(), day: localDay(now), type: 'note-game', ...result }
 }
+
+/** Wynik podejścia do piosenki – to, co zapisujemy w zdarzeniu `song`. */
+export interface SongResult {
+  songId: string
+  /** „song” = cała piosenka, liczba = numer frazy. */
+  scope: 'song' | number
+  /** Tryb jako tekst („fretboard” / „staff”) – stare dane przetrwają nowe tryby. */
+  mode: string
+  notes: number
+  firstTry: number
+  /** Korona, na którą zasłużyło to podejście (0 = żadna) – sama korona to osobne zdarzenie. */
+  crown: number
+  xp: number
+}
+
+export interface SongPlayEvent extends ActivityEvent, SongResult {
+  type: 'song'
+}
+
+export function isSongPlay(e: ActivityEvent): e is SongPlayEvent {
+  return e.type === 'song' && typeof e.songId === 'string' && typeof e.crown === 'number'
+}
+
+/** Skończone podejście do frazy albo całej piosenki. */
+export function songPlayEvent(
+  profileId: string,
+  result: SongResult,
+  now = new Date(),
+): SongPlayEvent {
+  return { id: crypto.randomUUID(), profileId, at: now.getTime(), day: localDay(now), type: 'song', ...result }
+}
+
+/** Premia za nową koronę 👑 – raz na koronę. */
+export const XP_CROWN = 5
+
+export interface CrownEvent extends ActivityEvent {
+  type: 'crown'
+  songId: string
+  /** Numer korony (1–3). */
+  crown: number
+  xp: number
+}
+
+export function isCrown(e: ActivityEvent): e is CrownEvent {
+  return e.type === 'crown' && typeof e.songId === 'string' && typeof e.crown === 'number'
+}
+
+/**
+ * Zdobyta korona. Id z osoby, piosenki i numeru korony – zdobyta na dwóch urządzeniach
+ * liczy się po połączeniu danych raz (tak jak cel dzienny).
+ */
+export function crownEvent(profileId: string, songId: string, crown: number, now = new Date()): CrownEvent {
+  return {
+    id: `crown:${profileId}:${songId}:${crown}`,
+    profileId,
+    at: now.getTime(),
+    day: localDay(now),
+    type: 'crown',
+    songId,
+    crown,
+    xp: XP_CROWN,
+  }
+}
+
+export interface SongUnlockEvent extends ActivityEvent {
+  type: 'song-unlock'
+  songId: string
+}
+
+export function isSongUnlock(e: ActivityEvent): e is SongUnlockEvent {
+  return e.type === 'song-unlock' && typeof e.songId === 'string'
+}
+
+/** Ręczne odblokowanie piosenki na ścieżce (np. nauczyciel każe ją przećwiczyć) – bez nutek. */
+export function songUnlockEvent(profileId: string, songId: string, now = new Date()): SongUnlockEvent {
+  return {
+    id: `song-unlock:${profileId}:${songId}`,
+    profileId,
+    at: now.getTime(),
+    day: localDay(now),
+    type: 'song-unlock',
+    songId,
+  }
+}

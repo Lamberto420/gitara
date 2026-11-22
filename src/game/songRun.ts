@@ -2,6 +2,7 @@
 // a na końcu wynik – nutki ⭐ i korona 👑, na którą to podejście zasługuje.
 // Czyste funkcje – ekran tylko je wywołuje. Korony zdobyte w historii wylicza silnik postępu.
 import { phraseNotes, type Song, type SongNote } from '../music/song'
+import type { SongResult } from '../progress/events'
 
 /** Z gryfem: miejsce palca widoczne (korona 1). Bez gryfu: czytanie z pięciolinii (korona 2). */
 export type SongMode = 'fretboard' | 'staff'
@@ -101,4 +102,17 @@ export function runCrown(r: SongRun): Crown {
 export function runXp(r: SongRun): number {
   if (!isRunFinished(r)) return 0
   return r.scope === 'song' ? SONG_XP : PHRASE_XP
+}
+
+/** Wynik skończonego podejścia do zapisania w zdarzeniu (patrz `songResultEvents`). */
+export function runResult(r: SongRun): SongResult {
+  return {
+    songId: r.songId,
+    scope: r.scope,
+    mode: r.mode,
+    notes: r.notes.length,
+    firstTry: firstTryCount(r),
+    crown: runCrown(r),
+    xp: runXp(r),
+  }
 }
