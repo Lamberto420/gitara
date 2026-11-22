@@ -135,3 +135,17 @@ Dalej, w tej kolejności:
 - Wyjaśniaj krótko, co i dlaczego zrobiłeś – uczę się Claude Code
 - Po każdym kroku napisz, co konkretnie zobaczę w aplikacji, a czego jeszcze nie
 - Pytaj przed `git push`, publicznymi i nieodwracalnymi operacjami (force push, tworzenie repo)
+
+## Agent skills
+
+### Issue tracker
+
+Zadania w GitHub Issues repo `Lamberto420/gitara` (przez `gh`). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Domyślne etykiety: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: `GLOSSARY.md` + `docs/adr/` w katalogu głównym (tworzone dopiero, gdy są potrzebne). See `docs/agents/domain.md`.
