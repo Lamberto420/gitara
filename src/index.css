@@ -1096,6 +1096,20 @@ h1 {
   box-shadow: 0 3px 0 var(--muted);
 }
 
+/* Fraza piosenki: linie jedna pod drugą w tej samej skali (szerokość linii ustawia komponent). */
+.song-staff {
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  display: grid;
+  gap: 8px;
+}
+
+.song-staff .song-staff-line {
+  max-width: none;
+  margin: 0;
+}
+
 .notes-controls {
   display: grid;
   grid-template-columns: 64px minmax(0, 1fr) 64px;
