@@ -113,32 +113,34 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
   Ciszę do testów: `ffmpeg -f lavfi -i anullsrc`; kilka tonów po kolei: `concat` kilku `sine`.
 - Układ sprawdzaj pomiarem (brak poziomego przewijania) przy szerokościach 320, 390 i 768 px.
 
-## Plan (stan na 2026-11-22)
+## Plan (stan na 2026-11-23)
 Zrobione: stroik (auto + blokada struny + dźwięk wzorcowy), metronom (tempo, metrum, tap tempo,
 Wake Lock), PWA, publikacja, profile z kopią zapasową, silnik postępu z nagłówkiem (seria, nutki, cel),
 licznik „Ćwiczę 🎸” (przycisk pod paskiem postępu, działa na każdej zakładce) z bonusami za
-metronom i nastrojenie gitary, 24–25 odznak (w tym piosenkowe: 🎶 💎 🏰 🗺️; lista „Całej ścieżki” zamrożona) z gablotą (🏅 w nagłówku) i świętowaniem,
+metronom i nastrojenie gitary, 24–25 odznak z gablotą (🏅 w nagłówku) i świętowaniem,
 komponenty pięciolinii i gryfu + zakładka „🎼 Nuty” (ściąga I pozycji: 24 nuty z krzyżykami,
 „Posłuchaj”, „Losuj”; bez nutek ⭐ – to podgląd, punkty da gra). `FIRST_POSITION_NATURALS` = łatwiejszy
 zestaw 17 nut bez krzyżyków (poziom Łatwy gry).
 Gra „🎯 Zagraj nutę” (zakładka Gra): runda 10 nut, Łatwy/Trudny, sprawdzanie mikrofonem, sama włącza
 „Ćwiczę”, odznaki 🎯 🎮 💯 🎓.
+Ścieżka „🎵 Piosenki” (#2): 8 piosenek z domeny publicznej z rytmem i tekstem, frazy, korony 👑 1–2,
+kłódki i ręczne odblokowanie, nutki fraza +1 / całość +3 / korona +5, „Posłuchaj” syntezą szarpniętej
+struny, odznaki 🎶 pierwsza piosenka, 💎 3 korony (łącznie), 🏰 10 koron, 🗺️ cała ścieżka (lista
+zamrożona), świętowanie nowej korony. Licznik „Ćwiczę” po „Zakończ” celowo działa dalej (liczy tylko granie).
 
 Dalej, w tej kolejności (ustalone 2026-11-22; pojęcia w `GLOSSARY.md`, prawa autorskie: ADR 0001):
-1. **Ścieżka z piosenkami wbudowanymi** (tylko domena publiczna, ~10 łatwych: „Wlazł kotek”,
-   „Panie Janie”, kolędy…): zapis z rytmem na pięciolinii, tekst pod nutami (wyłączany), frazy bez
-   blokad, korony 👑 1 (do końca, gryf widoczny) i 2 (bez gryfu, ≥ 90% za pierwszym razem).
-   Następna piosenka po 1 koronie albo ręczne odblokowanie. Piosenka sama włącza „Ćwiczę”.
-   Nutki: fraza +1, cała piosenka +3, nowa korona +5 (raz). Korony wyliczane ze zdarzeń.
-   Odznaki: 🎵 pierwsza piosenka, 👑 trzy korony, 🗺️ koniec ścieżki, 📻 własna piosenka, kolekcjoner koron 10/25.
-2. **Korona 3: rytm z metronomem** w tempie piosenki (wolniej = nutki bez korony).
+1. **Korona 3: rytm z metronomem** w tempie piosenki (wolniej = nutki bez korony).
    Najpierw wyrzucany prototyp: czy mikrofon trafia w rytm; jeśli nie – korona 3 za tempo całości.
-3. **Import MusicXML** do półki „Nasze piosenki” (własne piosenki, bez kłódek, tylko w danych
+   Razem z nią: odznaka „trzy korony w jednej piosence” (nowe id, 💎 zostaje za 3 łącznie)
+   i kolekcjoner 25 koron (dziś maks. 16 – nie do zdobycia). Pokaż 3. miejsce na koronę (`CROWNS_AVAILABLE`).
+2. **Import MusicXML** do półki „Nasze piosenki” (własne piosenki, bez kłódek, tylko w danych
    rodziny): linia melodii, automatyczna transpozycja do I pozycji (najmniej krzyżyków), oktawa
    dla wystających nut, lista zmian. Własna piosenka = rekord z id, `updatedAt`, nagrobkiem.
-4. **Ręczny edytor** własnych piosenek (poprawki po imporcie, ćwiczenia z książki – dawne „zadania domowe”).
-5. Przegląd całej punktacji ⭐ (czy nie dajemy za dużo / za mało za poszczególne ćwiczenia).
-6. Później: akordy i bicie (tor m.in. dla taty), trener tempa w metronomie; automatyczna
+   Razem z nim odznaka 📻 korona we własnej piosence.
+3. **Ręczny edytor** własnych piosenek (poprawki po imporcie, ćwiczenia z książki – dawne „zadania domowe”).
+4. Przegląd całej punktacji ⭐ (czy nie dajemy za dużo / za mało za poszczególne ćwiczenia).
+5. Później: akordy i bicie (tor m.in. dla taty), trener tempa w metronomie; brzmienie „Posłuchaj”
+   z próbek gitary klasycznej (CC0) zamiast syntezy; automatyczna
    synchronizacja przez Firebase, jeśli ręczne kopie okażą się uciążliwe (wymaga zmiany zasady
    „brak backendu”, reguł dostępu tylko dla kont rodziny i sprawdzenia limitów darmowego planu).
 
