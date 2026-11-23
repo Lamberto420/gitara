@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { newProfile, type ActivityEvent } from '../data/model'
 import { computeBadges } from './badges'
-import { goalEvent, practiceEvent } from './events'
+import { crownEvent, goalEvent, practiceEvent } from './events'
 import { newCelebrations, snapshot } from './celebrations'
 import { computeProgress } from './progress'
 
@@ -13,13 +13,19 @@ const tata = newProfile({ name: 'Tata', avatar: '🐻', color: '#38f', dailyGoal
 function state(events: ActivityEvent[], profile = kuba, day = TODAY) {
   const progress = computeProgress(events, profile, day)
   const badges = computeBadges(events, profile, [profile], day)
-  return { progress, badges, snap: snapshot(profile.id, day, progress, badges) }
+  return { progress, badges, snap: snapshot(profile.id, day, progress, badges, events) }
 }
 
 const kinds = (events: ActivityEvent[], before: ActivityEvent[]) => {
   const next = state(events)
   return newCelebrations(state(before).snap, next.snap, next.progress, next.badges).map((c) =>
-    c.kind === 'badge' ? `badge:${c.badge.id}` : c.kind === 'level' ? `level:${c.level}` : c.kind,
+    c.kind === 'badge'
+      ? `badge:${c.badge.id}`
+      : c.kind === 'level'
+        ? `level:${c.level}`
+        : c.kind === 'crown'
+          ? `crown:${c.songId}:${c.crown}`
+          : c.kind,
   )
 }
 
@@ -49,5 +55,21 @@ describe('newCelebrations', () => {
     expect(newCelebrations(state([]).snap, t.snap, t.progress, t.badges)).toEqual([])
     const tomorrow = state(events, kuba, '2026-10-28')
     expect(newCelebrations(state([]).snap, tomorrow.snap, tomorrow.progress, tomorrow.badges)).toEqual([])
+  })
+
+  it('korona: najpierw korona, potem odznaki; przy koronie 2 od razu – tylko najwyższa', () => {
+    const before = [practiceEvent('kuba', 60, NOW)]
+    const first = [...before, crownEvent('kuba', 'mary-lamb', 1, NOW)]
+    expect(kinds(first, before)).toEqual(['crown:mary-lamb:1', 'badge:song-1'])
+    const both = [...first, crownEvent('kuba', 'twinkle', 1, NOW), crownEvent('kuba', 'twinkle', 2, NOW)]
+    expect(kinds(both, first)).toEqual(['crown:twinkle:2', 'badge:crowns-3'])
+    // Kolejność zdarzeń po połączeniu urządzeń bywa dowolna.
+    const reversed = [...first, crownEvent('kuba', 'twinkle', 2, NOW), crownEvent('kuba', 'twinkle', 1, NOW)]
+    expect(kinds(reversed, first)).toEqual(['crown:twinkle:2', 'badge:crowns-3'])
+  })
+
+  it('korona innej osoby (np. z importu na jej urządzeniu) – nic', () => {
+    const before = [practiceEvent('kuba', 60, NOW)]
+    expect(kinds([...before, crownEvent('tata', 'mary-lamb', 1, NOW)], before)).toEqual([])
   })
 })

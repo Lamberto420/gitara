@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { newProfile, type ActivityEvent } from '../data/model'
-import { computeBadges } from './badges'
+import { SONGS } from '../music/songs'
+import { computeBadges, PATH_BADGE_SONGS } from './badges'
 import { addDays } from './days'
-import { goalEvent, noteGameEvent, practiceEvent, tunedEvent } from './events'
+import { crownEvent, goalEvent, noteGameEvent, practiceEvent, tunedEvent } from './events'
 
 const TODAY = '2026-10-27'
 const kuba = newProfile({ name: 'Kuba', avatar: '🦊', color: '#f80', dailyGoalMinutes: 10 }, 1, 'kuba')
@@ -91,5 +92,35 @@ describe('computeBadges', () => {
     const more = [...rounds, ...Array.from({ length: 6 }, (_, i) => game('kuba', -2, 'easy', 5 + i)), game('kuba', -1, 'hard', 10)]
     expect(earned(more)['game-10']).toBe(addDays(TODAY, -1)) // 3 + 6 + 1 = 10. runda
     expect(earned(more)['game-hard-perfect']).toBe(addDays(TODAY, -1))
+  })
+
+  it('piosenki: pierwsza piosenka, 3 i 10 koron – liczą się korony tej osoby', () => {
+    const crown = (who: string, offset: number, song: string, c: number) => crownEvent(who, song, c, at(offset))
+    const events = [crown('tata', -9, 'twinkle', 1), crown('kuba', -5, 'mary-lamb', 1), crown('kuba', -4, 'mary-lamb', 2)]
+    let e = earned(events)
+    expect(e['song-1']).toBe(addDays(TODAY, -5))
+    expect(e['crowns-3']).toBeNull() // korona taty się nie liczy
+    events.push(crown('kuba', -3, 'twinkle', 1))
+    e = earned(events)
+    expect(e['crowns-3']).toBe(addDays(TODAY, -3))
+    expect(e['crowns-10']).toBeNull()
+    for (const song of ['ode-to-joy', 'panie-janie', 'jingle-bells', 'happy-birthday', 'silent-night', 'alle-meine-entchen'])
+      events.push(crown('kuba', -2, song, 1)) // 9 koron
+    expect(earned(events)['crowns-10']).toBeNull()
+    events.push(crown('kuba', -1, 'twinkle', 2))
+    expect(earned(events)['crowns-10']).toBe(addDays(TODAY, -1)) // 10. korona
+  })
+
+  it('cała ścieżka: dzień, w którym ostatnia piosenka dostała koronę', () => {
+    const crowns = PATH_BADGE_SONGS.map((song, i) => crownEvent('kuba', song, 1, at(-10 + i)))
+    expect(earned(crowns.slice(1))['path-end']).toBeNull()
+    expect(earned(crowns)['path-end']).toBe(addDays(TODAY, -10 + PATH_BADGE_SONGS.length - 1))
+    // Druga korona tej samej piosenki nie zastąpi brakującej.
+    expect(earned([...crowns.slice(1), crownEvent('kuba', PATH_BADGE_SONGS[1], 2, at(0))])['path-end']).toBeNull()
+  })
+
+  it('zamrożona lista ścieżki to prawdziwe piosenki', () => {
+    const ids = new Set(SONGS.map((s) => s.id))
+    expect(PATH_BADGE_SONGS.every((id) => ids.has(id))).toBe(true)
   })
 })

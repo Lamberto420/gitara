@@ -10,7 +10,7 @@ import { useToday } from '../progress/useProgress'
  * co przybyło w trakcie korzystania z aplikacji (nie przy starcie, zmianie osoby ani imporcie kopii).
  */
 export function useCelebrations(progress: ProfileProgress | null, badges: Badge[]) {
-  const { activeProfile, importCount } = useProfiles()
+  const { data, activeProfile, importCount } = useProfiles()
   const today = useToday()
   const [queue, setQueue] = useState<Celebration[]>([])
   const prevRef = useRef<ProgressSnapshot | null>(null)
@@ -21,13 +21,13 @@ export function useCelebrations(progress: ProfileProgress | null, badges: Badge[
       prevRef.current = null
       return
     }
-    const next = snapshot(activeProfile.id, today, progress, badges)
+    const next = snapshot(activeProfile.id, today, progress, badges, data.events)
     const imported = importRef.current !== importCount
     importRef.current = importCount
     const fresh = imported ? [] : newCelebrations(prevRef.current, next, progress, badges)
     prevRef.current = next
     if (fresh.length) setQueue((q) => [...q, ...fresh])
-  }, [activeProfile, progress, badges, today, importCount])
+  }, [activeProfile, progress, badges, today, importCount, data.events])
 
   // Zmiana osoby: nagrody poprzedniej osoby już nieaktualne.
   useEffect(() => setQueue([]), [activeProfile?.id])

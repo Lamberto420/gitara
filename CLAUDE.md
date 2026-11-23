@@ -78,7 +78,7 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
   (dzień uratowany ochroną też się liczy).
 - 🏅 Odznaki (`progress/badges.ts`): wyliczane ze zdarzeń z dniem zdobycia, nigdy nie przepadają
   (seria = najdłuższa w historii). Nowa odznaka = nowa reguła w `RULES` (+ test); id odznak są stałe.
-- Świętowanie (`progress/celebrations.ts`): cel, awans, odznaka – tylko gdy przybyły w trakcie
+- Świętowanie (`progress/celebrations.ts`): nowa korona (tylko najwyższa nowa w piosence), cel, awans, odznaka – tylko gdy przybyły w trakcie
   używania aplikacji (nie przy starcie, zmianie osoby, nowym dniu ani imporcie kopii).
   Konfetti własne (canvas, wyłączone przy „ogranicz animacje”), fanfara tylko po geście użytkownika.
 
@@ -117,7 +117,7 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 Zrobione: stroik (auto + blokada struny + dźwięk wzorcowy), metronom (tempo, metrum, tap tempo,
 Wake Lock), PWA, publikacja, profile z kopią zapasową, silnik postępu z nagłówkiem (seria, nutki, cel),
 licznik „Ćwiczę 🎸” (przycisk pod paskiem postępu, działa na każdej zakładce) z bonusami za
-metronom i nastrojenie gitary, 20–21 odznak z gablotą (🏅 w nagłówku) i świętowaniem,
+metronom i nastrojenie gitary, 24–25 odznak (w tym piosenkowe: 🎶 💎 🏰 🗺️; lista „Całej ścieżki” zamrożona) z gablotą (🏅 w nagłówku) i świętowaniem,
 komponenty pięciolinii i gryfu + zakładka „🎼 Nuty” (ściąga I pozycji: 24 nuty z krzyżykami,
 „Posłuchaj”, „Losuj”; bez nutek ⭐ – to podgląd, punkty da gra). `FIRST_POSITION_NATURALS` = łatwiejszy
 zestaw 17 nut bez krzyżyków (poziom Łatwy gry).

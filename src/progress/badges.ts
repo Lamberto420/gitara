@@ -3,7 +3,7 @@
 // a zdobytej odznaki nie da się stracić (liczymy z całej historii, np. najdłuższą serię).
 import { addDays } from './days'
 import type { ActivityEvent, Profile } from '../data/model'
-import { isGoal, isNoteGame, isPractice } from './events'
+import { isCrown, isGoal, isNoteGame, isPractice } from './events'
 import { familyDays } from './progress'
 import { computeStreak } from './streak'
 
@@ -25,6 +25,21 @@ export interface Badge extends BadgeDef {
 /** Granie przed tą godziną (czasu lokalnego) daje odznakę „Ranny ptaszek”. */
 export const EARLY_BIRD_HOUR = 8
 export const FAMILY_BADGE_DAYS = 3
+
+/**
+ * Piosenki ścieżki, których ukończenie daje „Całą ścieżkę”. Lista zamrożona: gdy dojdą nowe
+ * piosenki, zdobyta odznaka nie może zniknąć (za nowe – nowa odznaka z nowym id).
+ */
+export const PATH_BADGE_SONGS: readonly string[] = [
+  'mary-lamb',
+  'alle-meine-entchen',
+  'twinkle',
+  'ode-to-joy',
+  'panie-janie',
+  'jingle-bells',
+  'happy-birthday',
+  'silent-night',
+]
 
 /** Wszystko, czego potrzebują odznaki – liczone raz dla osoby. */
 interface Stats {
@@ -55,6 +70,26 @@ const count = (type: string) => (e: ActivityEvent) => (e.type === type ? 1 : 0)
 /** Runda gry bez ani jednej pomyłki (opcjonalnie tylko na danym poziomie). */
 const perfectRound = (level?: string) => (e: ActivityEvent) =>
   isNoteGame(e) && e.firstTry === e.notes && (!level || e.level === level) ? 1 : 0
+
+/** Dzień, w którym każda z piosenek miała już koronę (choćby pierwszą). */
+function allSongsCrownedOn(events: ActivityEvent[], songIds: readonly string[]): string | null {
+  const missing = new Set(songIds)
+  for (const e of events) {
+    if (isCrown(e) && missing.delete(e.songId) && missing.size === 0) return e.day
+  }
+  return null
+}
+
+function crownsBadge(id: string, emoji: string, name: string, crowns: number): BadgeRule {
+  return {
+    id,
+    emoji,
+    name,
+    description: `${crowns} zdobytych koron 👑`,
+    hint: `Zdobądź ${crowns} koron w 🎵 Piosenkach`,
+    earned: (s) => firstDayReaching(s.mine, count('crown'), crowns),
+  }
+}
 
 function minutesBadge(id: string, emoji: string, name: string, minutes: number, label: string): BadgeRule {
   return {
@@ -158,6 +193,32 @@ const RULES: readonly BadgeRule[] = [
     description: 'Bezbłędna runda na trudnym poziomie',
     hint: 'Bezbłędna runda na poziomie 🔥 Trudny',
     earned: (s) => firstDayReaching(s.mine, perfectRound('hard'), 1),
+  },
+  {
+    id: 'song-1',
+    emoji: '🎶',
+    name: 'Pierwsza piosenka',
+    description: 'Cała piosenka zagrana od początku do końca',
+    hint: 'Zagraj całą piosenkę w zakładce 🎵 Piosenki',
+    // Korona 1 = cała piosenka zagrana (w dowolnym trybie).
+    earned: (s) => firstDayReaching(s.mine, count('crown'), 1),
+  },
+  {
+    id: 'crowns-3',
+    emoji: '💎',
+    name: 'Trzy korony',
+    description: '3 zdobyte korony 👑',
+    hint: 'Zdobądź 3 korony w 🎵 Piosenkach',
+    earned: (s) => firstDayReaching(s.mine, count('crown'), 3),
+  },
+  crownsBadge('crowns-10', '🏰', 'Kolekcjoner koron', 10),
+  {
+    id: 'path-end',
+    emoji: '🗺️',
+    name: 'Cała ścieżka',
+    description: `Korona za każdą z ${PATH_BADGE_SONGS.length} piosenek ścieżki`,
+    hint: 'Dojdź do końca ścieżki w 🎵 Piosenkach',
+    earned: (s) => allSongsCrownedOn(s.mine, PATH_BADGE_SONGS),
   },
   {
     id: 'early-bird',

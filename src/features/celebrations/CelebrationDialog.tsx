@@ -1,6 +1,8 @@
 import { useEffect } from 'react'
 import { playFanfare } from '../../audio/fanfare'
 import type { Celebration } from '../../progress/celebrations'
+import { CROWN_2_PERCENT } from '../../game/songRun'
+import { SONGS } from '../../music/songs'
 import { XP_DAILY_GOAL } from '../../progress/events'
 import Confetti from './Confetti'
 
@@ -12,6 +14,11 @@ function content(c: Celebration): { emoji: string; title: string; text: string }
       return { emoji: '🚀', title: `Poziom ${c.level}!`, text: `Nowy tytuł: ${c.name}` }
     case 'badge':
       return { emoji: c.badge.emoji, title: 'Nowa odznaka!', text: `${c.badge.name} – ${c.badge.description}` }
+    case 'crown': {
+      const title = SONGS.find((s) => s.id === c.songId)?.title ?? 'Piosenka'
+      const how = c.crown >= 2 ? `bez gryfu, ${CROWN_2_PERCENT}% nut od razu` : 'cała piosenka zagrana'
+      return { emoji: '👑', title: `Korona ${c.crown}!`, text: `„${title}” – ${how}` }
+    }
   }
 }
 
