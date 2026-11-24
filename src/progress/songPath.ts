@@ -48,6 +48,9 @@ export function songResultEvents(
 ): ActivityEvent[] {
   const had = crownsBySong(events, profileId).get(result.songId) ?? 0
   const out: ActivityEvent[] = [songPlayEvent(profileId, result, now)]
+  // Korona 3 (rytm) dopiero po koronie 2 – gra w rytmie nie ćwiczy czytania nut „za pierwszym razem”,
+  // więc nie może za nie dawać koron 1–2. (Ekran blokuje ten tryb – tu pilnujemy zasady w logice.)
+  if (result.crown === 3 && had < 2) return out
   for (let c = had + 1; c <= result.crown; c++) out.push(crownEvent(profileId, result.songId, c, now))
   return out
 }

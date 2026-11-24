@@ -87,6 +87,14 @@ describe('songResultEvents', () => {
     expect(songResultEvents('k', result('a', 1), [crownEvent('k', 'a', 2, NOW)], NOW)).toHaveLength(1)
   })
 
+  it('korona 3 (rytm) tylko po koronie 2 – i nie dokłada niższych', () => {
+    expect(songResultEvents('k', result('a', 3), [], NOW)).toHaveLength(1)
+    expect(songResultEvents('k', result('a', 3), [crownEvent('k', 'a', 1, NOW)], NOW)).toHaveLength(1)
+    const after2 = songResultEvents('k', result('a', 3), [crownEvent('k', 'a', 1, NOW), crownEvent('k', 'a', 2, NOW)], NOW)
+    expect(after2.slice(1).map((e) => e.crown)).toEqual([3])
+    expect(crownsBySong([crownEvent('k', 'a', 1, NOW), crownEvent('k', 'a', 2, NOW), ...after2], 'k').get('a')).toBe(3)
+  })
+
   it('korona zdobyta na dwóch urządzeniach liczy się po połączeniu raz', () => {
     const phone = songResultEvents('k', result('a', 1), [], NOW)
     const tablet = songResultEvents('k', result('a', 1), [], new Date(2026, 10, 22, 19, 0))
