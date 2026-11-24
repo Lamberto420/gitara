@@ -103,8 +103,10 @@ export interface SongResult {
   songId: string
   /** „song” = cała piosenka, liczba = numer frazy. */
   scope: 'song' | number
-  /** Tryb jako tekst („fretboard” / „staff”) – stare dane przetrwają nowe tryby. */
+  /** Tryb jako tekst („fretboard” / „staff” / „rhythm”) – stare dane przetrwają nowe tryby. */
   mode: string
+  /** Gra w rytmie: tempo w procentach tempa piosenki (korona 3 tylko przy 100). */
+  tempo?: number
   notes: number
   firstTry: number
   /** Korona, na którą zasłużyło to podejście (0 = żadna) – sama korona to osobne zdarzenie. */

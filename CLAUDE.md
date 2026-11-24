@@ -32,7 +32,7 @@ src/data/       model danych, łączenie (merge), migracje, zapis, kopia zapasow
 src/progress/   silnik postępu: nutki, poziomy, seria, ochrona, rodzinna seria, odznaki (czyste funkcje)
 src/music/      nuty I pozycji (struna/próg/palec) i miejsce na pięciolinii (czyste funkcje)
 src/game/       gry: rozpoznawanie nuty (noteListener, powtórzona nuta = nowe szarpnięcie), runda „Zagraj nutę”,
-                przebieg piosenki i korony (songRun) – czyste funkcje
+                przebieg piosenki i korony (songRun), gra w rytmie: plan tyków/nut i ocena (rhythmRun) – czyste funkcje
 src/features/   ekrany i hooki React: tuner/, metronome/, profiles/, progress/, practice/, badges/,
                 celebrations/, game/ (pitchLoop – wspólna pętla mikrofonu gier), songs/ (ścieżka, piosenka, „Posłuchaj”),
                 notation/ (<Staff>, <SongStaff>, <Fretboard> – własne SVG, kolor nuty = kolor struny)
