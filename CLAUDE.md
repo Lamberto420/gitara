@@ -26,7 +26,8 @@ Publikacja: https://lamberto420.github.io/gitara/ (repo publiczne: github.com/La
 
 ## Architektura
 ```
-src/audio/      czysta logika dźwięku: pitch/ (YIN, nuty, mediana), metronome/ (harmonogram, tap tempo)
+src/audio/      czysta logika dźwięku: pitch/ (YIN, nuty, mediana), metronome/ (harmonogram, tap tempo),
+                onsets (szarpnięcia co do próbki – do rytmu), sampleTap (AudioWorklet: próbki z numerem na zegarze audio)
 src/data/       model danych, łączenie (merge), migracje, zapis, kopia zapasowa
 src/progress/   silnik postępu: nutki, poziomy, seria, ochrona, rodzinna seria, odznaki (czyste funkcje)
 src/music/      nuty I pozycji (struna/próg/palec) i miejsce na pięciolinii (czyste funkcje)
@@ -45,6 +46,7 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
 - `PracticeProvider` (`usePracticeSession()`): sesja „Ćwiczę 🎸” dla całej aplikacji – gra włącza ją sama.
 - Mikrofon: `openMicrophone()` daje jeden wspólny strumień (licznik użytkowników) z osobnym analizatorem
   dla każdego – drugi `getUserMedia` na iOS potrafi wyciszyć pierwszy.
+  `mic.tap()` dokłada podsłuch każdej próbki z czasem na zegarze audio (ten sam co tyki) – do gry w rytmie.
 
 ## Model danych (ważne – nie łam tych zasad)
 - **Postęp to log zdarzeń** (`ActivityEvent` z unikalnym `id`), a nie zagregowane liczniki.
@@ -111,6 +113,8 @@ src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca fal
   `el.click()` przez CDP nie jest gestem użytkownika – bez `--autoplay-policy` AudioContext nie wystartuje.
   Vite zatrzymuj po PID z portu (`ss -ltnp`), nie `pkill -f` – wzorzec trafia też we własną powłokę.
   Ciszę do testów: `ffmpeg -f lavfi -i anullsrc`; kilka tonów po kolei: `concat` kilku `sine`.
+  Plik w scratchpadzie znika po nocy – brak pliku = **cisza bez błędu na stronie** (błąd tylko w logu Chromium:
+  „Failed to read … as input to the fake device”). Równe szarpnięcia: `aevalsrc='0.6*exp(-2.5*mod(t\,0.75))*sin(2*PI*329.63*t)'`.
 - Układ sprawdzaj pomiarem (brak poziomego przewijania) przy szerokościach 320, 390 i 768 px.
 
 ## Plan (stan na 2026-11-23)

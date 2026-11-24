@@ -1,5 +1,9 @@
+import { tapSamples, type SampleHandler } from './sampleTap'
+
 export interface Microphone {
   analyser: AnalyserNode
+  /** Każda próbka z numerem na zegarze audio – do gry w rytmie (`audio/onsets.ts`). */
+  tap(onSamples: SampleHandler): Promise<void>
   stop(): void
 }
 
@@ -44,11 +48,19 @@ export async function openMicrophone(ctx: AudioContext): Promise<Microphone> {
   node.connect(analyser)
 
   let stopped = false
+  const untaps: (() => void)[] = []
   return {
     analyser,
+    async tap(onSamples) {
+      const untap = await tapSamples(ctx, node, onSamples)
+      // Zatrzymany w trakcie ładowania podsłuchu – od razu odpinamy.
+      if (stopped) untap()
+      else untaps.push(untap)
+    },
     stop() {
       if (stopped) return
       stopped = true
+      untaps.forEach((u) => u())
       node.disconnect(analyser)
       release(source)
     },
