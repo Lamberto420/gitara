@@ -34,7 +34,8 @@ src/music/      nuty I pozycji (struna/próg/palec) i miejsce na pięciolinii (c
 src/game/       gry: rozpoznawanie nuty (noteListener, powtórzona nuta = nowe szarpnięcie), runda „Zagraj nutę”,
                 przebieg piosenki i korony (songRun), gra w rytmie: plan tyków/nut i ocena (rhythmRun) – czyste funkcje
 src/features/   ekrany i hooki React: tuner/, metronome/, profiles/, progress/, practice/, badges/,
-                celebrations/, game/ (pitchLoop – wspólna pętla mikrofonu gier), songs/ (ścieżka, piosenka, „Posłuchaj”),
+                celebrations/, game/ (pitchLoop – wspólna pętla mikrofonu gier), songs/ (ścieżka, piosenka, „Posłuchaj”,
+                useRhythmPlay – gra w rytmie: tyki planowane na bieżąco, ocena na żywo),
                 notation/ (<Staff>, <SongStaff>, <Fretboard> – własne SVG, kolor nuty = kolor struny)
 src/storage.ts  bezpieczny dostęp do localStorage (try/catch, `save` zwraca false przy błędzie)
 ```

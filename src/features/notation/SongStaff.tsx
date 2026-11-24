@@ -10,6 +10,10 @@ const TOP = 36
 /** Dół rysunku co najmniej pod „8” klucza wiolinowego. */
 const MIN_BOTTOM = 138
 
+/** Ocena nuty w grze w rytmie: dobrze i w czasie / dobra nuta, ale nierówno / zła albo brak. */
+export type NoteMark = 'good' | 'off' | 'bad'
+const MARK_COLORS: Record<NoteMark, string> = { good: '#1f9d48', off: '#f08a00', bad: '#d93025' }
+
 interface Props {
   song: Song
   phrase: number
@@ -20,10 +24,12 @@ interface Props {
   /** Kolor nuty = kolor struny; bez kolorów, gdy gramy „bez podpowiedzi”. */
   colorful?: boolean
   lyrics?: boolean
+  /** Ocena nut frazy (indeks = nuta we frazie) – kolor nuty zamiast koloru struny; brak = bez oceny. */
+  marks?: readonly (NoteMark | undefined)[]
 }
 
 /** Fraza piosenki na pięciolinii z rytmem: laski, belki, kropki, pauzy, kreski taktowe i tekst. */
-export default function SongStaff({ song, phrase, current = null, dimPlayed = false, colorful = true, lyrics = true }: Props) {
+export default function SongStaff({ song, phrase, current = null, dimPlayed = false, colorful = true, lyrics = true, marks }: Props) {
   const lines = layoutPhrase(song, phrase, LINE_WIDTH)
   const withLyrics = lyrics && lines.some((l) => l.items.some((i) => i.kind === 'note' && i.syllable))
   return (
@@ -37,6 +43,7 @@ export default function SongStaff({ song, phrase, current = null, dimPlayed = fa
           dimPlayed={dimPlayed}
           colorful={colorful}
           lyrics={withLyrics}
+          marks={marks}
         />
       ))}
     </div>
@@ -50,6 +57,7 @@ function Line({
   dimPlayed,
   colorful,
   lyrics,
+  marks,
 }: {
   line: StaffLine
   meter: readonly [number, number]
@@ -57,10 +65,15 @@ function Line({
   dimPlayed: boolean
   colorful: boolean
   lyrics: boolean
+  marks?: readonly (NoteMark | undefined)[]
 }) {
   const notes = line.items.filter((i): i is LaidNote => i.kind === 'note')
   const byIndex = new Map(notes.map((n) => [n.index, n]))
-  const color = (n: LaidNote) => (colorful ? STRING_COLORS[n.note.string] : 'currentColor')
+  const color = (n: LaidNote) => {
+    const mark = marks?.[n.index]
+    if (mark) return MARK_COLORS[mark]
+    return colorful ? STRING_COLORS[n.note.string] : 'currentColor'
+  }
   const opacity = (n: LaidNote) => (dimPlayed && current !== null && n.index < current ? 0.4 : 1)
   const cur = current === null ? undefined : byIndex.get(current)
 

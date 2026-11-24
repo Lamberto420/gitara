@@ -1343,7 +1343,7 @@ button.song-step-button {
 
 .song-modes {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   min-width: 0;
   margin: 0;
@@ -1380,14 +1380,107 @@ button.song-step-button {
   outline: 3px solid var(--accent-dark);
 }
 
+.song-mode {
+  text-align: center;
+}
+
+/* Kłódka: tryb widać (wiadomo, co dalej), ale nie da się go wybrać. */
+.song-mode.locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .song-mode-label {
-  font-size: 1.2rem;
+  /* Trzy kafelki obok siebie także na telefonie 320 px. */
+  font-size: clamp(0.95rem, 4.2vw, 1.2rem);
   font-weight: 800;
 }
 
 .song-mode-text {
-  font-size: 0.9rem;
+  font-size: clamp(0.75rem, 3.4vw, 0.9rem);
   font-weight: 700;
+}
+
+.song-tempos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.song-tempos-legend {
+  padding: 0;
+  margin-bottom: 6px;
+  font-weight: 800;
+}
+
+.song-tempo {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: var(--muted);
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.song-tempo input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.song-tempo.active {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 0 var(--accent-dark);
+}
+
+.song-tempo:has(input:focus-visible) {
+  outline: 3px solid var(--accent-dark);
+}
+
+/* Takt wejścia: duża cyfra „1 2 3 4” – widać ją z daleka, z gitarą na kolanach. */
+.rhythm-count {
+  margin: 0;
+  font-size: 3.2rem;
+  line-height: 1;
+  font-weight: 900;
+  color: var(--accent-dark);
+}
+
+.rhythm-details {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.rhythm-review {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.rhythm-legend {
+  margin: 0;
+  font-weight: 700;
+}
+
+.rhythm-legend-good {
+  color: #1f9d48;
+}
+
+.rhythm-legend-off {
+  color: #f08a00;
+}
+
+.rhythm-legend-bad {
+  color: #d93025;
 }
 
 .song .notes-controls {
